@@ -10,7 +10,7 @@ const router = useRouter();
 
 
  const handleClick=(e)=>{
-router.push('/patientInfo')
+router.push('/PatientInfo')
   }
   return (
     <div className={styles.container}>
