@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Container, Card, Row, Grid, Input, Button } from "@nextui-org/react";
 import styles from "../styles/Patient.module.css";
 import { useRouter } from "next/router";
-import { NEW_PATIENT } from "../graphql/querys";
-import {useMutation } from "@apollo/client";
+import { GET_ENCOUNTER_TYPES, NEW_PATIENT } from "../graphql/querys";
+import {useMutation, useQuery } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 
 export default function PatientInfo() {
@@ -21,11 +21,21 @@ export default function PatientInfo() {
   const [pincode, setPincode] = useState("");
   const [dob, setDob] = useState("");
   const [ailments, setAilments] = useState([]);
+  const [encounterTypes, setEncounterTypes] = useState([]);
+  const [encounterType, setEncounterType] = useState('');
   
   const genderItems = ['Male', 'Female', 'Other']
   
-  const [createPatient, { data, error }] = useMutation(NEW_PATIENT);
+  const [createPatient, { data: createPatientData, error: createPatientError }] = useMutation(NEW_PATIENT);
+  const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
 
+
+  React.useEffect(() => {
+    if (encounterTypesData) {
+      var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
+      setEncounterTypes(data)
+    }
+  }, [encounterTypesLoading])
 
   const checkValues = () => {
     if (fullName === "") {
@@ -64,14 +74,14 @@ export default function PatientInfo() {
   };
 
   const handleRemoveField = (index) => {
-    const values = [ailments];
+    const values = [...ailments];
+    console.log(values)
     values.splice(index, 1);
     setAilments(values);
   };
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(gender)
     const checkValueResponse = checkValues();
 
     if (checkValueResponse.status === true) {
@@ -88,20 +98,26 @@ export default function PatientInfo() {
           city: city,
           state: state,
           pincode: parseInt(pincode),
+          encounterType: encounterTypesData.allEncounterType.find(en => en.encounterType === encounterType)?.id,
+          existingAilments: ailments
         },
       });
-      if (data) {
-        console.log(data);
-      } else if (error) {
-        console.log(error instanceof Error);
+      if (createPatientData) {
+        console.log(createPatientData);
+        alert('Data entered successfully')
+        window.location.reload()
+      } else if (createPatientError) {
+        console.log(createPatientError instanceof Error);
       }
       //  const patient = await CreatePatient(body);
     }
   }
-
   return (
     <Container className={styles.padding}>
       <Card>
+        <Row>
+          <Container className={styles.formTitle}>Patient Information</Container>
+        </Row>
         <Row>
           {/* Grid */}
           <form>
@@ -141,7 +157,7 @@ export default function PatientInfo() {
               </Grid>
 
               <Grid className={styles.Grid}>
-                <DropdownCustom items={genderItems} handleChange={setGender}/>
+                <DropdownCustom label={'Gender'} items={genderItems} handleChange={setGender}/>
               </Grid>
               
               <Grid className={styles.Grid}>
@@ -249,6 +265,11 @@ export default function PatientInfo() {
                   }}
                 />
               </Grid>
+              
+              <Grid className={styles.Grid}>
+                <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
+              </Grid>
+
               {/* <Grid className={styles.Grid}>
                 <Input
                   className={styles.Input}
@@ -267,13 +288,16 @@ export default function PatientInfo() {
               
             </Grid.Container>
             {/* Dynamic Ailment */}
-            {ailments.map((ailment, index) => (
-              <div key={index}>
-                <Grid.Container
-                >
+            <Grid.Container>
+              <Row>
+                <Container className={styles.ailmentContainerTitle}>Existing Ailments, if any:</Container>
+              </Row>
+              <Container className={styles.ailmentsRowsContainer}>
+              {ailments.map((ailment, index) => (
+              <Row key={index}>
                   <Grid className={styles.Grid}>
                     <Input
-                      className={styles.Input}
+                      className={styles.ailmentsInput}
                       rounded
                       bordered
                       label="Ailment"
@@ -286,7 +310,7 @@ export default function PatientInfo() {
                   </Grid>
                   <Grid className={styles.Grid}>
                     <Input
-                      className={styles.Input}
+                      className={styles.ailmentsInput}
                       rounded
                       bordered
                       label="Comment"
@@ -302,18 +326,19 @@ export default function PatientInfo() {
                     <Button
                       css={{ my: "$12", mx: "$10", width: "50px" }}
                       shadow
-                      color="gradient"
+                      color='warning'
                       size="sm"
                       onClick={() => handleRemoveField(index)}
                     >
                       Remove
                     </Button>
                   </Grid>
-                </Grid.Container>
-              </div>
+              </Row>
             ))}
+            </Container>
+            </Grid.Container>
             <Button
-              css={{ my: "$12", mx: "$10", width: "50px" }}
+              css={{ my: "$5", mx: "$12", width: "50px" }}
               shadow
               size="sm"
               onClick={() => handleAddField()}

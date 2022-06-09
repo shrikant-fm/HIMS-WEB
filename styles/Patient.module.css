@@ -1,12 +1,25 @@
+.formTitle {
+  font-size: 25px;
+  color: green;
+}
+
 .Input {
   width: 20vw;
-  margin: 0 5px 0 0;
   color: primary;
 }
 
-.ailmentInput{
-    width: 250px;
-    color: primary;
+.ailmentContainerTitle {
+  font-size: 15px;
+  color: #0072f5;
+}
+
+.ailmentsRowsContainer {
+  padding-top: 10px;
+}
+
+.ailmentsInput {
+  width: 20vw;
+  margin: 0 10px 0 0;
 }
 
 /* .center {
