@@ -4,6 +4,7 @@ import styles from "../styles/Patient.module.css";
 import { useRouter } from "next/router";
 import { NEW_PATIENT } from "../graphql/querys";
 import {useMutation } from "@apollo/client";
+import DropdownCustom from "../components/Dropdown";
 
 export default function PatientInfo() {
   const router = useRouter();
@@ -18,15 +19,13 @@ export default function PatientInfo() {
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
   const [pincode, setPincode] = useState("");
-  const [ailment, setAilment] = useState("");
   const [dob, setDob] = useState("");
-  const [inputFields, setInputFields] = useState([
-    {
-      ailment: "",
-      comment: "",
-    },
-  ]);
+  const [ailments, setAilments] = useState([]);
+  
+  const genderItems = ['Male', 'Female', 'Other']
+  
   const [createPatient, { data, error }] = useMutation(NEW_PATIENT);
+
 
   const checkValues = () => {
     if (fullName === "") {
@@ -43,8 +42,6 @@ export default function PatientInfo() {
       return { status: true, msg: "Please Enter City" };
     } else if (pincode === "") {
       return { status: true, msg: "Please Enter pincode" };
-    } else if (ailment === "") {
-      return { status: true, msg: "Please Enter existing ailment" };
     } else if (address1 === "") {
       return { status: true, msg: "Please Enter address line 1" };
     } else if (address2 === "") {
@@ -57,24 +54,24 @@ export default function PatientInfo() {
   };
 
   const handleChangeInput = (index, event) => {
-    const values = [...inputFields];
+    const values = [...ailments];
     values[index][event.target.name] = event.target.value;
-    setInputFields(values);
+    setAilments(values);
   };
 
   const handleAddField = () => {
-    setInputFields([...inputFields, { ailment: "", comment: "" }]);
+    setAilments([...ailments, { ailment: "", comment: "" }]);
   };
 
   const handleRemoveField = (index) => {
-    const values = [inputFields];
+    const values = [ailments];
     values.splice(index, 1);
-    setInputFields(values);
+    setAilments(values);
   };
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    console.log(gender)
     const checkValueResponse = checkValues();
 
     if (checkValueResponse.status === true) {
@@ -83,6 +80,7 @@ export default function PatientInfo() {
       await createPatient({
         variables: {
           patientName: fullName,
+          dateOfBirth: dob,
           phoneNo: parseInt(contact),
           gender: gender,
           address: address1.concat(" ", address2),
@@ -109,7 +107,7 @@ export default function PatientInfo() {
           <form>
             <Grid.Container
               className={styles.padding}
-              gap={3}
+              gap={2}
               justify="space-between"
             >
               <Grid className={styles.Grid}>
@@ -132,21 +130,6 @@ export default function PatientInfo() {
                   className={styles.Input}
                   rounded
                   bordered
-                  label="Gender"
-                  placeholder="Gender"
-                  color="primary"
-                  onChange={(e) => {
-                    const setGenderState = e.target.value;
-                    setGender(setGenderState);
-                  }}
-                />
-              </Grid>
-
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
                   label="Contact Number"
                   placeholder="Contact Number"
                   color="primary"
@@ -156,76 +139,11 @@ export default function PatientInfo() {
                   }}
                 />
               </Grid>
+
               <Grid className={styles.Grid}>
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="State"
-                  placeholder="State"
-                  color="primary"
-                  onChange={(e) => {
-                    const setStateName = e.target.value;
-                    setState(setStateName);
-                  }}
-                />
+                <DropdownCustom items={genderItems} handleChange={setGender}/>
               </Grid>
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="District"
-                  placeholder="District"
-                  color="primary"
-                  onChange={(e) => {
-                    const setDistrictState = e.target.value;
-                    setDistrict(setDistrictState);
-                  }}
-                />
-              </Grid>
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="City"
-                  placeholder="City"
-                  color="primary"
-                  onChange={(e) => {
-                    const setCityState = e.target.value;
-                    setCity(setCityState);
-                  }}
-                />
-              </Grid>
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="Pincode"
-                  placeholder="Pincode"
-                  color="primary"
-                  onChange={(e) => {
-                    const setPincodeState = e.target.value;
-                    setPincode(setPincodeState);
-                  }}
-                />
-              </Grid>
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="Existing Ailments"
-                  placeholder="Existing Ailments"
-                  color="primary"
-                  onChange={(e) => {
-                    const setAilmentState = e.target.value;
-                    setAilment(setAilmentState);
-                  }}
-                />
-              </Grid>
+              
               <Grid className={styles.Grid}>
                 <Input
                   className={styles.Input}
@@ -241,6 +159,7 @@ export default function PatientInfo() {
                   }}
                 />
               </Grid>
+
               <Grid className={styles.address}>
                 <Input
                   width="535px"
@@ -269,27 +188,89 @@ export default function PatientInfo() {
                   }}
                 />
               </Grid>
+
+              <Grid className={styles.Grid}>
+                <Input
+                  className={styles.Input}
+                  rounded
+                  bordered
+                  label="City"
+                  placeholder="City"
+                  color="primary"
+                  onChange={(e) => {
+                    const setCityState = e.target.value;
+                    setCity(setCityState);
+                  }}
+                />
+              </Grid>
+
+              <Grid className={styles.Grid}>
+                <Input
+                  className={styles.Input}
+                  rounded
+                  bordered
+                  label="District"
+                  placeholder="District"
+                  color="primary"
+                  onChange={(e) => {
+                    const setDistrictState = e.target.value;
+                    setDistrict(setDistrictState);
+                  }}
+                />
+              </Grid>
+              
+              <Grid className={styles.Grid}>
+                <Input
+                  className={styles.Input}
+                  rounded
+                  bordered
+                  label="State"
+                  placeholder="State"
+                  color="primary"
+                  onChange={(e) => {
+                    const setStateName = e.target.value;
+                    setState(setStateName);
+                  }}
+                />
+              </Grid>
+              
+              
+              <Grid className={styles.Grid}>
+                <Input
+                  className={styles.Input}
+                  rounded
+                  bordered
+                  label="Pincode"
+                  placeholder="Pincode"
+                  color="primary"
+                  onChange={(e) => {
+                    const setPincodeState = e.target.value;
+                    setPincode(setPincodeState);
+                  }}
+                />
+              </Grid>
+              {/* <Grid className={styles.Grid}>
+                <Input
+                  className={styles.Input}
+                  rounded
+                  bordered
+                  label="Existing Ailments"
+                  placeholder="Existing Ailments"
+                  color="primary"
+                  onChange={(e) => {
+                    const setAilmentState = e.target.value;
+                    setAilment(setAilmentState);
+                  }}
+                />
+              </Grid> */}
+              
+              
             </Grid.Container>
             {/* Dynamic Ailment */}
-
-            {inputFields.map((inputField, index) => (
+            {ailments.map((ailment, index) => (
               <div key={index}>
                 <Grid.Container
-                  className={styles.ailmentPadding}
-                  justify="space-between"
                 >
-                  <Grid className={styles.Grid}>
-                    <Button
-                      css={{ my: "$12", mx: "$10", width: "50px" }}
-                      shadow
-                      color="gradient"
-                      size="sm"
-                      onClick={() => handleAddField()}
-                    >
-                      Add Ailment
-                    </Button>
-                  </Grid>
-
                   <Grid className={styles.Grid}>
                     <Input
                       className={styles.Input}
@@ -299,7 +280,7 @@ export default function PatientInfo() {
                       placeholder="Ailment"
                       color="primary"
                       name="ailment"
-                      value={inputField.ailment}
+                      value={ailment.ailment}
                       onChange={(event) => handleChangeInput(index, event)}
                     />
                   </Grid>
@@ -312,7 +293,7 @@ export default function PatientInfo() {
                       placeholder="Comment"
                       color="primary"
                       name="comment"
-                      value={inputField.comment}
+                      value={ailment.comment}
                       onChange={(event) => handleChangeInput(index, event)}
                     />
                   </Grid>
@@ -331,6 +312,12 @@ export default function PatientInfo() {
                 </Grid.Container>
               </div>
             ))}
+            <Button
+              css={{ my: "$12", mx: "$10", width: "50px" }}
+              shadow
+              size="sm"
+              onClick={() => handleAddField()}
+            >Add Ailment</Button>
 
             {/*Dynamic Ailment End  */}
           </form>

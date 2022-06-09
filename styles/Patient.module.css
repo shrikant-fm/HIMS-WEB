@@ -1,5 +1,6 @@
 .Input {
-  width: 22vw;
+  width: 20vw;
+  margin: 0 5px 0 0;
   color: primary;
 }
 
@@ -18,9 +19,6 @@
   padding: 3vw 2vh;
 }
 
-.ailmentPadding{
-  padding: 1rem 1rem;
-}
 .container {
   width: auto;
   height: 100px;
