@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Container, Card, Row, Grid, Input, Button } from "@nextui-org/react";
 import styles from "../styles/Patient.module.css";
 import { useRouter } from "next/router";
+import { NEW_PATIENT } from "../graphql/querys";
+import {useMutation } from "@apollo/client";
 
 export default function PatientInfo() {
   const router = useRouter();
@@ -20,9 +22,11 @@ export default function PatientInfo() {
   const [dob, setDob] = useState("");
   const [inputFields, setInputFields] = useState([
     {
-      ailment: '', comment: ''
+      ailment: "",
+      comment: "",
     },
   ]);
+  const [createPatient, { data, error }] = useMutation(NEW_PATIENT);
 
   const checkValues = () => {
     if (fullName === "") {
@@ -52,23 +56,23 @@ export default function PatientInfo() {
     }
   };
 
-  const handleChangeInput = (index, event) =>{
+  const handleChangeInput = (index, event) => {
     const values = [...inputFields];
     values[index][event.target.name] = event.target.value;
     setInputFields(values);
-  }
+  };
 
   const handleAddField = () => {
-    setInputFields([...inputFields,{ailment:'',comment:''}])
-  }
+    setInputFields([...inputFields, { ailment: "", comment: "" }]);
+  };
 
   const handleRemoveField = (index) => {
     const values = [inputFields];
-    values.splice(index,1);
+    values.splice(index, 1);
     setInputFields(values);
-  }
+  };
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const checkValueResponse = checkValues();
@@ -76,7 +80,24 @@ export default function PatientInfo() {
     if (checkValueResponse.status === true) {
       alert(checkValueResponse.msg);
     } else {
-      router.push('/Upload')
+      await createPatient({
+        variables: {
+          patientName: fullName,
+          phoneNo: parseInt(contact),
+          gender: gender,
+          address: address1.concat(" ", address2),
+          district: district,
+          city: city,
+          state: state,
+          pincode: parseInt(pincode),
+        },
+      });
+      if (data) {
+        console.log(data);
+      } else if (error) {
+        console.log(error instanceof Error);
+      }
+      //  const patient = await CreatePatient(body);
     }
   }
 
@@ -86,7 +107,11 @@ export default function PatientInfo() {
         <Row>
           {/* Grid */}
           <form>
-            <Grid.Container className={styles.padding} gap={2} justify="space-between">
+            <Grid.Container
+              className={styles.padding}
+              gap={3}
+              justify="space-between"
+            >
               <Grid className={styles.Grid}>
                 <Input
                   className={styles.Input}
@@ -244,83 +269,75 @@ export default function PatientInfo() {
                   }}
                 />
               </Grid>
-
-              </Grid.Container>
+            </Grid.Container>
             {/* Dynamic Ailment */}
 
-              
-                  { inputFields.map((inputField, index) =>(
-                    
-                    <div key={index}>
-                  <Grid.Container className={styles.ailmentPadding} justify="space-between">
-                    
+            {inputFields.map((inputField, index) => (
+              <div key={index}>
+                <Grid.Container
+                  className={styles.ailmentPadding}
+                  justify="space-between"
+                >
                   <Grid className={styles.Grid}>
-                      <Button 
-                      css={{ my:"$12",mx:"$10",width:"50px"}} 
-                      shadow color="gradient" 
+                    <Button
+                      css={{ my: "$12", mx: "$10", width: "50px" }}
+                      shadow
+                      color="gradient"
                       size="sm"
                       onClick={() => handleAddField()}
-                      >
-                        Add Ailment
-                      </Button>
-                      </Grid>
-                    
-                    <Grid className={styles.Grid}>
+                    >
+                      Add Ailment
+                    </Button>
+                  </Grid>
 
-                      <Input
+                  <Grid className={styles.Grid}>
+                    <Input
                       className={styles.Input}
-                       
-                       rounded
-                       bordered
-                       label="Ailment"
-                       placeholder="Ailment"
-                       color="primary"
-                       name="ailment"
-                       value={inputField.ailment}
-                        onChange={event => handleChangeInput(index,event)}
-                      />
-                      </Grid>
-                      <Grid className={styles.Grid}>
-                      <Input
-                      className={styles.Input }
-                      
-                       rounded
-                       bordered
-                       label="Comment"
-                       placeholder="Comment"
-                       color="primary"
-                       name="comment"
-                       value={inputField.comment}
-                       onChange={event => handleChangeInput(index,event)}
-                      />
-                      </Grid>
-                     
-                      <Grid className={styles.Grid}>
-                      <Button 
-                      css={{ my:"$12",mx:"$10",width:"50px"}}
-                       shadow color="gradient" 
-                       size="sm"
-                       onClick={() => handleRemoveField(index)}
-                       >
-                        Remove
-                      </Button>
-                      </Grid>
-                      </Grid.Container>
+                      rounded
+                      bordered
+                      label="Ailment"
+                      placeholder="Ailment"
+                      color="primary"
+                      name="ailment"
+                      value={inputField.ailment}
+                      onChange={(event) => handleChangeInput(index, event)}
+                    />
+                  </Grid>
+                  <Grid className={styles.Grid}>
+                    <Input
+                      className={styles.Input}
+                      rounded
+                      bordered
+                      label="Comment"
+                      placeholder="Comment"
+                      color="primary"
+                      name="comment"
+                      value={inputField.comment}
+                      onChange={(event) => handleChangeInput(index, event)}
+                    />
+                  </Grid>
 
-                    </div>
-                    
-                  ) )}
-                   
-              
-                  
-              {/*Dynamic Ailment End  */}
+                  <Grid className={styles.Grid}>
+                    <Button
+                      css={{ my: "$12", mx: "$10", width: "50px" }}
+                      shadow
+                      color="gradient"
+                      size="sm"
+                      onClick={() => handleRemoveField(index)}
+                    >
+                      Remove
+                    </Button>
+                  </Grid>
+                </Grid.Container>
+              </div>
+            ))}
 
+            {/*Dynamic Ailment End  */}
           </form>
           {/* Grid End */}
         </Row>
       </Card>
 
-   
       <div className={styles.container}>
         <Button
           size="xl"
