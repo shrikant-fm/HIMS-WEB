@@ -1,34 +1,11 @@
 import React from "react";
+import styles from "../styles/Home.module.css";
 import { useState } from "react";
-import { Grid, Card, Container, Input, Button, Row } from "@nextui-org/react";
-import { useQuery } from "@apollo/client";
-import { GET_PATIENT_DATA } from "../graphql/querys";
-import styles from "../styles/Upload.module.css"
-import Header from "../components/Header";
+import { Grid, Card, Container, Input, Button } from "@nextui-org/react";
 
 export default function Upload(props) {
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
-  const [phoneNo, setPhoneNo] = useState('');
-  const [patientData, setPatientData] = useState(null);
-
-  const getPatientData = async() => {
-    refetch();
-  }
-  const emulateFetch = _ => {
-    return new Promise(resolve => {
-      resolve([{ data: "ok" }]);
-    });
-  };
-
-  const { loading: patientDataLoading, data, error: patientDataError, refetch } = useQuery(GET_PATIENT_DATA,
-    {variables: {phoneNo: parseFloat(phoneNo)}},
-    emulateFetch,
-    {
-      refetchOnWindowFocus: false,
-      enabled: false // disable this query from automatically running
-    }
-  )
 
   // TO DISPLAY IMAGE ON USER-2 PAGE ITSELF
 
@@ -40,19 +17,10 @@ export default function Upload(props) {
   //     setCreateObjectURL(URL.createObjectURL(i));
   //   }
   // };
-  
-  React.useEffect(() => {
-    if (data && data.fetchPatientByPhoneNo) {
-      setPatientData(data.fetchPatientByPhoneNo)
-    } else {
-      setPatientData(null)
-    }
-  }, [data])
 
   const uploadToServer = async (event) => {
     const body = new FormData();
     body.append("file", image);
-    console.log(body)
     const response = await fetch("/api/", {
       method: "POST",
       body,
@@ -60,85 +28,80 @@ export default function Upload(props) {
   };
 
   return (
-    <>
-    <Header/>
-    <Container className={styles.root}>
+    <Container css={{ width: 800 }}>
       <Card>
         <Card.Body>
           <Grid.Container css={{ my: 4 }} gap={2} justify="space-between">
-            <Row>
-              <Container className={styles.formTitle}>Upload Prescription</Container>
-            </Row>
             <Grid xs={4}>
-              <Input clearable bordered label="Phone number" color="primary" placeholder="Enter phone number" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)}/>
+              <Input clearable bordered labelPlaceholder="Enter Contact" />
             </Grid>
-            {/* <Grid xs={4}>
-              <Button color="primary" auto ghost onClick={getPatientData}>
+            <Grid xs={4}>
+              <Button color="primary" auto ghost>
                 Search
               </Button>
-            </Grid> */}
+            </Grid>
           </Grid.Container>
           <Grid.Container gap={2} justify="space-between">
-            <Grid xs={4}>
+            <Grid xs={6} sm={6} lg={4} xl={4}>
               <Input
                 name="fname"
                 readOnly
-                color="primary"
-                value={patientData ? patientData.patientName : '-'}
+                placeholder="Primary"
+                initialValue="Full Name"
                 label="Full Name"
+
               />
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={6} sm={6} lg={4} xl={4}>
               <Input
                 name="gender"
                 readOnly
-                color="primary"
-                value={patientData ? patientData.gender : '-'}
+                placeholder="Primary"
+                initialValue="Gender"
                 label="Gender"
               />
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={6} sm={6} lg={4} xl={4}>
               <Input
                 name="state"
                 readOnly
-                color="primary"
-                value={patientData ? patientData.state : '-'}
+                placeholder="Primary"
+                initialValue="State"
                 label="State"
               />
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={6} sm={6} lg={4} xl={4}>
               <Input
                 name="district"
                 readOnly
-                color="primary"
-                value={patientData ? patientData.district : '-'}
+                placeholder="Primary"
+                initialValue="District"
                 label="District"
               />
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={6} sm={6} lg={4} xl={4}>
               <Input
                 name="city"
                 readOnly
-                color="primary"
-                value={patientData ? patientData.city : '-'}
+                placeholder="Primary"
+                initialValue="City"
                 label="City"
               />
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={6} sm={6} lg={4} xl={4}>
               <Input
                 name="pincode"
                 readOnly
-                color="primary"
-                value={patientData ? patientData.pincode : '-'}
+                placeholder="Primary"
+                initialValue="Pincode"
                 label="Pincode"
               />
             </Grid>
-          {patientData ? 
-          <Row>
-            <Grid xs={6}>
+
+            <Grid xs={6} sm={6} lg={4} xl={4}>
               <input type="file" name="myImage"  />
             </Grid>
-            <Grid xs={6}>
+            <Grid xs={16} sm={6} lg={4} xl={4}>
               <Button
                 shadow
                 color="success"
@@ -150,11 +113,9 @@ export default function Upload(props) {
                 Upload
               </Button>
             </Grid>
-          </Row> : ''}
           </Grid.Container>
         </Card.Body>
       </Card>
     </Container>
-    </>
   );
 }

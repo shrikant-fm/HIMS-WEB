@@ -129,7 +129,7 @@ export default function PatientInfo() {
               gap={2}
               justify="space-between"
             >
-              <Grid className={styles.Grid}>
+              <Grid xs={4}>
                 <Input
                   className={styles.Input}
                   rounded
@@ -144,7 +144,7 @@ export default function PatientInfo() {
                 />
               </Grid>
 
-              <Grid className={styles.Grid}>
+              <Grid xs={4} >
                 <Input
                   className={styles.Input}
                   rounded
@@ -159,11 +159,11 @@ export default function PatientInfo() {
                 />
               </Grid>
 
-              <Grid className={styles.Grid}>
+              <Grid xs={4} >
                 <DropdownCustom label={'Gender'} items={genderItems} handleChange={setGender}/>
               </Grid>
               
-              <Grid className={styles.Grid}>
+              <Grid xs={4}>
                 <Input
                   className={styles.Input}
                   type="date"
@@ -179,36 +179,9 @@ export default function PatientInfo() {
                 />
               </Grid>
 
-              <Grid className={styles.address}>
-                <Input
-                  width="535px"
-                  rounded
-                  bordered
-                  label="Address Line-1"
-                  placeholder="Address Line-1"
-                  color="primary"
-                  onChange={(e) => {
-                    const setFirstAddress = e.target.value;
-                    setAddress1(setFirstAddress);
-                  }}
-                />
-              </Grid>
-              <Grid className={styles.address}>
-                <Input
-                  width="535px"
-                  rounded
-                  bordered
-                  label="Address Line-2"
-                  placeholder="Address Line-2"
-                  color="primary"
-                  onChange={(e) => {
-                    const setSecondAddress = e.target.value;
-                    setAddress2(setSecondAddress);
-                  }}
-                />
-              </Grid>
+              
 
-              <Grid className={styles.Grid}>
+              <Grid xs={4} >
                 <Input
                   className={styles.Input}
                   rounded
@@ -223,7 +196,7 @@ export default function PatientInfo() {
                 />
               </Grid>
 
-              <Grid className={styles.Grid}>
+              <Grid xs={4} >
                 <Input
                   className={styles.Input}
                   rounded
@@ -238,7 +211,7 @@ export default function PatientInfo() {
                 />
               </Grid>
               
-              <Grid className={styles.Grid}>
+              <Grid xs={4} >
                 <Input
                   className={styles.Input}
                   rounded
@@ -254,7 +227,7 @@ export default function PatientInfo() {
               </Grid>
               
               
-              <Grid className={styles.Grid}>
+              <Grid xs={4} >
                 <Input
                   className={styles.Input}
                   rounded
@@ -269,10 +242,37 @@ export default function PatientInfo() {
                 />
               </Grid>
               
-              <Grid className={styles.Grid}>
+              <Grid xs={4}>
                 <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
               </Grid>
-
+              <Grid  xs={6}>
+                <Input
+                  width="535px"
+                  rounded
+                  bordered
+                  label="Address Line-1"
+                  placeholder="Address Line-1"
+                  color="primary"
+                  onChange={(e) => {
+                    const setFirstAddress = e.target.value;
+                    setAddress1(setFirstAddress);
+                  }}
+                />
+              </Grid>
+              <Grid  xs={6} >
+                <Input
+                  width="535px"
+                  rounded
+                  bordered
+                  label="Address Line-2"
+                  placeholder="Address Line-2"
+                  color="primary"
+                  onChange={(e) => {
+                    const setSecondAddress = e.target.value;
+                    setAddress2(setSecondAddress);
+                  }}
+                />
+              </Grid>
               {/* <Grid className={styles.Grid}>
                 <Input
                   className={styles.Input}
@@ -298,7 +298,7 @@ export default function PatientInfo() {
               <Container className={styles.ailmentsRowsContainer}>
               {ailments.map((ailment, index) => (
               <Row key={index}>
-                  <Grid className={styles.Grid}>
+                  <Grid xs={4}>
                     <Input
                       className={styles.ailmentsInput}
                       rounded
@@ -311,7 +311,7 @@ export default function PatientInfo() {
                       onChange={(event) => handleChangeInput(index, event)}
                     />
                   </Grid>
-                  <Grid className={styles.Grid}>
+                  <Grid xs={4}>
                     <Input
                       className={styles.ailmentsInput}
                       rounded
