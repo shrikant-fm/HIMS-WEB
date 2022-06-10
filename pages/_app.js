@@ -8,7 +8,6 @@ function MyApp({ Component, pageProps }) {
     <>
     <ApolloProvider client={client}>
       <NextUIProvider>
-        {/* <Header/> */}
         <Component {...pageProps} />
       </NextUIProvider>
       </ApolloProvider>

@@ -6,6 +6,17 @@ import { gql} from "@apollo/client";
     }
   }`;
 
+  const GET_PATIENT_DATA =gql`query FetchPatientByPhoneNo($phoneNo: Float!) {
+    fetchPatientByPhoneNo(phoneNo: $phoneNo) {
+      patientName
+      gender
+      state
+      city
+      pincode
+      district
+    }
+  }`;
+
   const GET_ENCOUNTER_TYPES =gql`query AllEncounterType {
     allEncounterType {
       id
@@ -16,4 +27,4 @@ import { gql} from "@apollo/client";
   }`;
 
 
-export {NEW_PATIENT, GET_ENCOUNTER_TYPES};
+export {NEW_PATIENT, GET_ENCOUNTER_TYPES,GET_PATIENT_DATA};

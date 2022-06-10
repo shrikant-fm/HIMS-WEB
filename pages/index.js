@@ -9,9 +9,14 @@ const router = useRouter();
 
 
 
- const handleClick=(e)=>{
-router.push('/patientInfo')
+  const routePatientRegistration=(e)=>{
+    router.push('/patientInfo')
   }
+
+  const routeUploadPrescription=(e)=>{
+    router.push('/Upload')
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -25,7 +30,10 @@ router.push('/patientInfo')
           Welcome to <a>HIMS !</a>
         </h1>
 
-        <Button  color="error" onClick={handleClick}>Fill Info</Button>
+        <Button  color="primary" onClick={routePatientRegistration} className={styles.menuItems}>Patient Registration</Button>
+        <Button  color="primary" onClick={routeUploadPrescription} className={styles.menuItems}>Upload Prescription</Button>
+        <Button  color="primary" onClick={() => {}} className={styles.menuItems}>Digitize Prescription</Button>
+        <Button  color="primary" onClick={() => {}} className={styles.menuItems}>Verify Prescription</Button>
       </main>
 
     </div>

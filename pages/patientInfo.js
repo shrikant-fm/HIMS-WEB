@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { GET_ENCOUNTER_TYPES, NEW_PATIENT } from "../graphql/querys";
 import {useMutation, useQuery } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
+import Header from "../components/Header";
 
 export default function PatientInfo() {
   const router = useRouter();
@@ -113,6 +114,8 @@ export default function PatientInfo() {
     }
   }
   return (
+    <>
+    <Header/>
     <Container className={styles.padding}>
       <Card>
         <Row>
@@ -362,5 +365,6 @@ export default function PatientInfo() {
         </Button>
       </div>
     </Container>
+    </>
   );
 }
