@@ -1,10 +1,17 @@
 .header{
-    margin: 10px 10px 0 10px;
-    padding: 10px 10px 0 10px;
+    margin: 2vh 2vw 0 2vh;
+    padding: 2vh 2vw 0 2vh;
 }
 
 .backBtn {
-    width: 150px;
+    width: 50px;
     color: #0072f5;
     background-color: white;
+}
+
+@media only screen and (max-width: 600px) {
+    .header {
+        margin: 2vh 1vw 0 2vh;
+        padding: 2vh 0 2vh 0;
+    }
 }

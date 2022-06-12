@@ -1,0 +1,52 @@
+.formTitle {
+    font-size: 25px;
+    color: green;
+}
+
+.fullNameInput, .contactNoInput, .genderInput {
+  width: 20vw;
+  min-width: 250px;
+}
+
+  .Input {
+    width: 20vw;
+    color: primary;
+    min-width: 200px;
+  }
+  
+  .ailmentContainerTitle {
+    font-size: 15px;
+    color: #0072f5;
+  }
+  
+  .ailmentsRowsContainer {
+    padding-top: 10px;
+  }
+  
+  .patientNameBtn {
+    background-color: transparent;
+    color: black;
+  }
+
+  .ailmentsInput {
+    width: 20vw;
+    margin: 0 10px 0 0;
+  }
+  
+  /* .center {
+    position: absolute;
+    transform: translate(420%, 0);
+    padding: 10px;
+  } */
+  
+  .padding {
+    padding: 2vw 2vh;
+  }
+  
+  .container {
+    width: auto;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

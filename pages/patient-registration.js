@@ -7,7 +7,7 @@ import {useMutation, useQuery } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 import Header from "../components/Header";
 
-export default function PatientInfo() {
+export default function PatientRegistration() {
   const router = useRouter();
 
   // State Handling
