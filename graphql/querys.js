@@ -17,6 +17,20 @@ import { gql} from "@apollo/client";
     }
   }`;
 
+  const GET_PATIENT_DATA_GENERAL = gql`query FetchPatientGeneral($patientName: String, $gender: String, $dateOfBirth: DateTime, $city: String, $pincode: Int, $phoneNo: Float) {
+    fetchPatientGeneral(patientName: $patientName, gender: $gender, dateOfBirth: $dateOfBirth, city: $city, pincode: $pincode, phoneNo: $phoneNo) {
+      id
+      patientName
+      gender
+      state
+      city
+      pincode
+      district
+      dateOfBirth
+      phoneNo
+    }
+  }`;
+
   const GET_ENCOUNTER_TYPES =gql`query AllEncounterType {
     allEncounterType {
       id
@@ -27,4 +41,4 @@ import { gql} from "@apollo/client";
   }`;
 
 
-export {NEW_PATIENT, GET_ENCOUNTER_TYPES,GET_PATIENT_DATA};
+export {NEW_PATIENT, GET_ENCOUNTER_TYPES,GET_PATIENT_DATA, GET_PATIENT_DATA_GENERAL};

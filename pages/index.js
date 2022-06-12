@@ -9,8 +9,8 @@ const router = useRouter();
 
 
 
-  const routePatientRegistration=(e)=>{
-    router.push('/patientInfo')
+  const routeGenerateSlip=(e)=>{
+    router.push('/generate-slip')
   }
 
   const routeUploadPrescription=(e)=>{
@@ -30,7 +30,7 @@ const router = useRouter();
           Welcome to <a>HIMS !</a>
         </h1>
 
-        <Button  color="primary" onClick={routePatientRegistration} className={styles.menuItems}>Patient Registration</Button>
+        <Button  color="primary" onClick={routeGenerateSlip} className={styles.menuItems}>Generate Slip</Button>
         <Button  color="primary" onClick={routeUploadPrescription} className={styles.menuItems}>Upload Prescription</Button>
         <Button  color="primary" onClick={() => {}} className={styles.menuItems}>Digitize Prescription</Button>
         <Button  color="primary" onClick={() => {}} className={styles.menuItems}>Verify Prescription</Button>
