@@ -26,5 +26,12 @@ import { gql} from "@apollo/client";
     }
   }`;
 
+const UPLOAD_FILE= gql`
+mutation SingleUpload($file: Upload!) {
+  singleUpload(file: $file) {
+    url
+  }
+}
+`;
 
-export {NEW_PATIENT, GET_ENCOUNTER_TYPES,GET_PATIENT_DATA};
+export {NEW_PATIENT, GET_ENCOUNTER_TYPES,GET_PATIENT_DATA,UPLOAD_FILE};
