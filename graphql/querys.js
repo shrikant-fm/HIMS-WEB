@@ -40,5 +40,17 @@ import { gql} from "@apollo/client";
     }
   }`;
 
+  const CREATE_ENCOUNTER = gql`mutation CreatePatientEncounter($patientId: Int!, $encounterCatalogId: Int!, $encounterTypeText: String, $primaryComplaint: String, $secondaryComplaint: String) {
+    createPatientEncounter(patientId: $patientId, encounterCatalogId: $encounterCatalogId, encounterTypeText: $encounterTypeText, primaryComplaint: $primaryComplaint, secondaryComplaint: $secondaryComplaint) {
+          id
+        }
+    }`;
 
-export {NEW_PATIENT, GET_ENCOUNTER_TYPES,GET_PATIENT_DATA, GET_PATIENT_DATA_GENERAL};
+
+export {
+  NEW_PATIENT,
+  GET_ENCOUNTER_TYPES,
+  GET_PATIENT_DATA,
+  GET_PATIENT_DATA_GENERAL,
+  CREATE_ENCOUNTER
+};

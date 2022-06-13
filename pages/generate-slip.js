@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Container, Card, Row, Grid, Input, Button, Table } from "@nextui-org/react";
 import styles from "../styles/generate-slip.module.css";
 import { useRouter } from "next/router";
-import { GET_PATIENT_DATA_GENERAL } from "../graphql/querys";
-import { useQuery, useLazyQuery } from "@apollo/client";
+import { GET_PATIENT_DATA_GENERAL, CREATE_ENCOUNTER, GET_ENCOUNTER_TYPES } from "../graphql/querys";
+import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 import Header from "../components/Header";
 import PatientDataCard from "../components/ShowPatientData";
@@ -21,10 +21,24 @@ export default function GenerateSlip() {
   const [dob, setDob] = useState("");
   const [error, setError] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null)
+  const [encounterTypes, setEncounterTypes] = useState([]);
+  const [selectedEncounterType, setSelectedEncounterType] = useState(null)
+  const [encounterTypeText, setEncounterTypeText] = useState(null)
+  const [primaryComplaint, setPrimaryComplaint] = useState(null)
+  const [secondaryComplaint, setSecondaryComplaint] = useState(null)
 
   const genderItems = ['Male', 'Female', 'Other']
 
   const [getPatientsData, { loading: patientsDataLoading, data: patientsData, error: patientsDataError }] = useLazyQuery(GET_PATIENT_DATA_GENERAL, {fetchPolicy: 'network-only'})
+  const [createEncounter, { loading: createEncounterLoading, data: createEncounterData, error: createEncounterError }] = useMutation(CREATE_ENCOUNTER);
+  const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
+
+  React.useEffect(() => {
+    if (encounterTypesData) {
+      var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
+      setEncounterTypes(data)
+    }
+  }, [encounterTypesLoading])
 
   const handleSubmit = async(e) => {
     e.preventDefault()
@@ -40,6 +54,27 @@ export default function GenerateSlip() {
         }
       }
     )
+  }
+
+  const handleGenerateSlip = async(e) => {
+    e.preventDefault()
+    if (!selectedEncounterType || selectedEncounterType == "") {
+      alert("Choose reason for visit")
+      return
+    }
+    if (selectedEncounterType == "Other" && encounterTypeText == null) {
+      alert('Enter reason to visit')
+      return
+    }
+    await createEncounter({
+      variables: {
+        patientId: selectedPatient.id,
+        encounterCatalogId: encounterTypesData.allEncounterType.find(en => en.encounterType === selectedEncounterType)?.id,
+        encounterTypeText: encounterTypeText,
+        primaryComplaint: primaryComplaint,
+        secondaryComplaint: secondaryComplaint
+      },
+    });
   }
 
   React.useEffect(() => {
@@ -58,6 +93,22 @@ export default function GenerateSlip() {
       }
     }
   }, [patientsDataLoading])
+
+  React.useEffect(() => {
+    if (!createEncounterLoading) {
+      if (createEncounterError) {
+        console.log(createEncounterError.message)
+        setError("Error in generating slip!! Try again later.")
+        return
+      } else {
+        if (createEncounterData) {
+          setError(null)
+          alert("Slip generated successfully. Encounter id: " + createEncounterData.createPatientEncounter.id)
+          window.location.reload()
+        }
+      }
+    }
+  }, [createEncounterLoading])
 
   const selectPatient = async(Id) => {
     var patient
@@ -95,6 +146,10 @@ export default function GenerateSlip() {
 
   const resetSelection = async() => {
     setSelectedPatient(null)
+    setEncounterTypeText(null)
+    setSelectedEncounterType(null)
+    setPrimaryComplaint(null)
+    setSecondaryComplaint(null)
   }
 
   const resetValues = async() => {
@@ -146,9 +201,6 @@ export default function GenerateSlip() {
     <Header backLabel={'Homepage'}/>
     {!selectedPatient ?
     <>
-    <Container>
-      <Button style={{marginLeft: 'auto'}} color="primary" onClick={() => router.push('/patient-registration')} className={styles.menuItems}>+ Register New Patient</Button>
-    </Container>
     <Container className={styles.padding}>
       <Card>
         <Row>
@@ -370,7 +422,6 @@ export default function GenerateSlip() {
           </Table.Header>
           <Table.Body>
             {patients ? patients.map((patient, i) => {
-              console.log(patient)
               return(
                 <Table.Row key={i}>
                   <Table.Cell css={{textAlign: 'center'}}>
@@ -383,9 +434,19 @@ export default function GenerateSlip() {
                   <Table.Cell css={{textAlign: 'center'}}>{patient.dateOfBirth ? calculateAge(patient.dateOfBirth) : '-'}</Table.Cell>
                 </Table.Row>
               )
-            }) : ''}
+            }) :
+              <Table.Row>
+                <Table.Cell css={{textAlign: 'center'}}>No Patient data found</Table.Cell>
+                <Table.Cell css={{textAlign: 'center'}}></Table.Cell>
+                <Table.Cell css={{textAlign: 'center'}}></Table.Cell>
+                <Table.Cell css={{textAlign: 'center'}}></Table.Cell>
+              </Table.Row>
+            }
           </Table.Body>
         </Table>
+        <Container>
+          <Button style={{marginTop: '20px'}} color="primary" onClick={() => router.push('/patient-registration')} className={styles.menuItems}>+ Register New Patient</Button>
+        </Container>
       </Container>
     </Container>
     </>
@@ -396,12 +457,64 @@ export default function GenerateSlip() {
           Selected Patient:
         </Row>
         <PatientDataCard data={selectedPatient}/>
+        <Container css={{marginTop: '20px'}}>
+          <Grid.Container gap={2}>
+            <Grid>
+              <DropdownCustom label={'Reason for visit'} items={encounterTypes} value={selectedEncounterType} handleChange={setSelectedEncounterType}/>
+            </Grid>
+            {selectedEncounterType && selectedEncounterType == "Other" ?
+            <Grid>
+              <Input
+                className={styles.enctrTypeTextInput}
+                rounded
+                bordered
+                placeholder="Enter reason"
+                color="primary"
+                value={encounterTypeText}
+                onChange={(e) => {
+                  setEncounterTypeText(e.target.value);
+                }}
+              />
+            </Grid>
+            : ''}
+            <Row>
+            <Grid>
+              <Input
+                className={styles.pComplaintInput}
+                rounded
+                bordered
+                label="Primary complaint"
+                placeholder="Primary complaint"
+                color="primary"
+                value={primaryComplaint}
+                onChange={(e) => {
+                  setPrimaryComplaint(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid>
+              <Input
+                className={styles.sComplaintInput}
+                rounded
+                bordered
+                label="Secondary complaint"
+                placeholder="Secondary complaint"
+                color="primary"
+                value={secondaryComplaint}
+                onChange={(e) => {
+                  setSecondaryComplaint(e.target.value);
+                }}
+              />
+            </Grid>
+          </Row>
+        </Grid.Container>
+        </Container>
         <Grid.Container gap={3} justify="center">
           <Grid>
           <Button
             color="success"
             auto
-            // onClick={e => handleSubmit(e)}
+            onClick={e => handleGenerateSlip(e)}
           >
             Generate Slip
           </Button>
