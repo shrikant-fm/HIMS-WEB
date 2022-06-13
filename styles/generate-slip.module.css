@@ -13,15 +13,17 @@
     color: primary;
     min-width: 200px;
   }
-  
-  .ailmentContainerTitle {
-    font-size: 15px;
-    color: #0072f5;
-  }
-  
-  .ailmentsRowsContainer {
-    padding-top: 10px;
-  }
+
+.enctrTypeTextInput {
+  width: 20vw;
+  min-width: 250px;
+  margin-top: 28px;
+}
+
+.pComplaintInput, .sComplaintInput {
+  width: 30vw;
+  min-width: 250px;
+}
   
   .patientNameBtn {
     background-color: transparent;
@@ -50,3 +52,9 @@
     justify-content: center;
     align-items: center;
   }
+
+@media only screen and (max-width: 600px) {
+  .enctrTypeTextInput {
+    margin-top: 10px;
+  }
+}
