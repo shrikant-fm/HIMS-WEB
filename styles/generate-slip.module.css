@@ -11,9 +11,11 @@
   .Input {
     width: 20vw;
     color: primary;
-    min-width: 200px;
+    min-width: 250px;
+  } 
+  .Grid{
+    padding: 1.5rem;
   }
-
 .enctrTypeTextInput {
   width: 20vw;
   min-width: 250px;

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Card, Row, Grid, Input, Button } from "@nextui-org/react";
 import styles from "../styles/Patient.module.css";
 import { useRouter } from "next/router";
-import { GET_ENCOUNTER_TYPES, NEW_PATIENT } from "../graphql/querys";
+import { GET_ENCOUNTER_TYPES, CREATE_NEW_PATIENT } from "../graphql/querys";
 import {useMutation, useQuery } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 import Header from "../components/Header";
@@ -21,65 +21,80 @@ export default function PatientRegistration() {
   const [address2, setAddress2] = useState("");
   const [pincode, setPincode] = useState("");
   const [dob, setDob] = useState("");
-  const [ailments, setAilments] = useState([]);
-  const [encounterTypes, setEncounterTypes] = useState([]);
-  const [encounterType, setEncounterType] = useState('');
+  // const [ailments, setAilments] = useState([]);
+  // const [encounterTypes, setEncounterTypes] = useState([]);
+  // const [encounterType, setEncounterType] = useState('');
   
   const genderItems = ['Male', 'Female', 'Other']
   
-  const [createPatient, { data: createPatientData, error: createPatientError }] = useMutation(NEW_PATIENT);
-  const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
+  const [createPatient, { loading: createPatientLoading, data: createPatientData, error: createPatientError }] = useMutation(CREATE_NEW_PATIENT);
+  // const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
 
+
+  // React.useEffect(() => {
+  //   if (encounterTypesData) {
+  //     var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
+  //     setEncounterTypes(data)
+  //   }
+  // }, [encounterTypesLoading])
 
   React.useEffect(() => {
-    if (encounterTypesData) {
-      var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
-      setEncounterTypes(data)
+    if (!createPatientLoading) {
+      if (createPatientError) {
+        console.log(createPatientError.message)
+        alert("Error in creating patients data!! Try again later.")
+        return
+      } else {
+        if (createPatientData) {
+          var data = createPatientData.fetchPatientGeneral
+          alert("Success")
+          // setError(null)
+          // redirect generate-slip
+        }
+      }
     }
-  }, [encounterTypesLoading])
+  }, [createPatientLoading])
 
   const checkValues = () => {
     if (fullName === "") {
       return { status: true, msg: "Please Enter Full Name" };
+    } else if (contact === "" || !(/^[0-9]{10}(\s*,*,\s*[0-9]{10})*$/.test(parseInt(contact)))) {
+      return { status: true, msg: "Please Enter Valid contact" };
     } else if (gender === "") {
       return { status: true, msg: "Please Select Gender" };
-    } else if (contact === "") {
-      return { status: true, msg: "Please Enter contact" };
-    } else if (state === "") {
-      return { status: true, msg: "Please Enter state" };
-    } else if (district === "") {
-      return { status: true, msg: "Please Enter district" };
-    } else if (city === "") {
-      return { status: true, msg: "Please Enter City" };
-    } else if (pincode === "") {
-      return { status: true, msg: "Please Enter pincode" };
-    } else if (address1 === "") {
-      return { status: true, msg: "Please Enter address line 1" };
-    } else if (address2 === "") {
-      return { status: true, msg: "Please Enter address line 2" };
     } else if (dob === "") {
       return { status: true, msg: "Please Enter Date Of Birth" };
+    } else if (state === "") {
+      return { status: true, msg: "Please Enter state" };
+    } else if (city === "") {
+      return { status: true, msg: "Please Enter City" };
+    } else if (pincode === "" || !(/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(pincode)))) {
+      return { status: true, msg: "Please Enter valid pincode" };
     } else {
       return { status: false };
     }
   };
 
-  const handleChangeInput = (index, event) => {
-    const values = [...ailments];
-    values[index][event.target.name] = event.target.value;
-    setAilments(values);
-  };
+//   checkPinCode = val => {
+//     return (/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(val)))
+// }
 
-  const handleAddField = () => {
-    setAilments([...ailments, { ailment: "", comment: "" }]);
-  };
+  // const handleChangeInput = (index, event) => {
+  //   const values = [...ailments];
+  //   values[index][event.target.name] = event.target.value;
+  //   setAilments(values);
+  // };
 
-  const handleRemoveField = (index) => {
-    const values = [...ailments];
-    console.log(values)
-    values.splice(index, 1);
-    setAilments(values);
-  };
+  // const handleAddField = () => {
+  //   setAilments([...ailments, { ailment: "", comment: "" }]);
+  // };
+
+  // const handleRemoveField = (index) => {
+  //   const values = [...ailments];
+  //   console.log(values)
+  //   values.splice(index, 1);
+  //   setAilments(values);
+  // };
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -94,22 +109,25 @@ export default function PatientRegistration() {
           dateOfBirth: dob,
           phoneNo: parseInt(contact),
           gender: gender,
-          address: address1.concat(" ", address2),
+          // address: address1.concat(" ", address2),
+          addressLine1: address1,
+          addressLine2: address2,
           district: district,
           city: city,
           state: state,
           pincode: parseInt(pincode),
-          encounterType: encounterTypesData.allEncounterType.find(en => en.encounterType === encounterType)?.id,
-          existingAilments: ailments
+          // encounterType: encounterTypesData.allEncounterType.find(en => en.encounterType === encounterType)?.id,
+          // existingAilments: ailments
         },
       });
-      if (createPatientData) {
-        console.log(createPatientData);
-        alert('Data entered successfully')
-        window.location.reload()
-      } else if (createPatientError) {
-        console.log(createPatientError instanceof Error);
-      }
+      // if (createPatientData) {
+      //   console.log(createPatientData);
+      //   alert('Data entered successfully')
+      //   // window.location.reload()
+      //   router.push('/generate-slip')
+      // } else if (createPatientError) {
+      //   console.log(createPatientError instanceof Error);
+      // }
       //  const patient = await CreatePatient(body);
     }
   }
@@ -117,7 +135,7 @@ export default function PatientRegistration() {
     <>
     <Header/>
     <Container className={styles.padding}>
-      <Card>
+      <Card css={{padding: '30px 0'}}>
         <Row>
           <Container className={styles.formTitle}>Patient Information</Container>
         </Row>
@@ -127,14 +145,14 @@ export default function PatientRegistration() {
             <Grid.Container
               className={styles.padding}
               gap={2}
-              justify="space-between"
+             
             >
-              <Grid xs={4}>
+              <Grid className={styles.Grid}>
                 <Input
-                  className={styles.Input}
+                  className={styles.fullNameInput}
                   rounded
                   bordered
-                  label="Full Name"
+                  label="Full Name *"
                   placeholder="Full Name"
                   color="primary"
                   onChange={(e) => {
@@ -144,12 +162,12 @@ export default function PatientRegistration() {
                 />
               </Grid>
 
-              <Grid xs={4} >
+              <Grid className={styles.Grid}>
                 <Input
-                  className={styles.Input}
+                  className={styles.contactNoInput}
                   rounded
                   bordered
-                  label="Contact Number"
+                  label="Contact Number *"
                   placeholder="Contact Number"
                   color="primary"
                   onChange={(e) => {
@@ -159,17 +177,17 @@ export default function PatientRegistration() {
                 />
               </Grid>
 
-              <Grid xs={4} >
-                <DropdownCustom label={'Gender'} items={genderItems} handleChange={setGender}/>
+              <Grid className={styles.Grid}>
+                <DropdownCustom  label={'Gender *'} items={genderItems} value={gender} handleChange={setGender}/>
               </Grid>
               
-              <Grid xs={4}>
+              <Grid className={styles.Grid}>
                 <Input
-                  className={styles.Input}
+                  className={styles.dobInput}
                   type="date"
                   rounded
                   bordered
-                  label="Date of Birth"
+                  label="Date of Birth *"
                   placeholder="DOB"
                   color="primary"
                   onChange={(e) => {
@@ -178,15 +196,60 @@ export default function PatientRegistration() {
                   }}
                 />
               </Grid>
-
-              
-
-              <Grid xs={4} >
+              <Grid className={styles.Grid}>
                 <Input
-                  className={styles.Input}
+                  className={styles.pincodeInput}
                   rounded
                   bordered
-                  label="City"
+                  label="Pincode *"
+                  placeholder="Pincode"
+                  color="primary"
+                  onChange={(e) => {
+                    const setPincodeState = e.target.value;
+                    setPincode(setPincodeState);
+                  }}
+                />
+              </Grid>
+              <Row>
+                <Grid.Container gap={3}>
+                <Grid className={styles.Grid}>
+                <Input
+                  className={styles.addressInput}
+                  rounded
+                  bordered
+                  label="Address Line-1"
+                  placeholder="Address Line-1"
+                  color="primary"
+                  onChange={(e) => {
+                    const setFirstAddress = e.target.value;
+                    setAddress1(setFirstAddress);
+                  }}
+                />
+              </Grid>
+              <Grid className={styles.Grid}>
+                <Input
+                  className={styles.addressInput}
+                  rounded
+                  bordered
+                  label="Address Line-2"
+                  placeholder="Address Line-2"
+                  color="primary"
+                  onChange={(e) => {
+                    const setSecondAddress = e.target.value;
+                    setAddress2(setSecondAddress);
+                  }}
+                />
+              </Grid>
+
+                </Grid.Container>
+              
+              </Row>
+              <Grid className={styles.Grid}>
+                <Input
+                  className={styles.cityInput}
+                  rounded
+                  bordered
+                  label="City *"
                   placeholder="City"
                   color="primary"
                   onChange={(e) => {
@@ -196,9 +259,9 @@ export default function PatientRegistration() {
                 />
               </Grid>
 
-              <Grid xs={4} >
+              <Grid className={styles.Grid}>
                 <Input
-                  className={styles.Input}
+                  className={styles.districtInput}
                   rounded
                   bordered
                   label="District"
@@ -211,12 +274,12 @@ export default function PatientRegistration() {
                 />
               </Grid>
               
-              <Grid xs={4} >
+              <Grid className={styles.Grid}>
                 <Input
-                  className={styles.Input}
+                  className={styles.stateInput}
                   rounded
                   bordered
-                  label="State"
+                  label="State *"
                   placeholder="State"
                   color="primary"
                   onChange={(e) => {
@@ -227,52 +290,12 @@ export default function PatientRegistration() {
               </Grid>
               
               
-              <Grid xs={4} >
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="Pincode"
-                  placeholder="Pincode"
-                  color="primary"
-                  onChange={(e) => {
-                    const setPincodeState = e.target.value;
-                    setPincode(setPincodeState);
-                  }}
-                />
-              </Grid>
               
-              <Grid xs={4}>
+              
+              {/* <Grid>
                 <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
-              </Grid>
-              <Grid  xs={6}>
-                <Input
-                  width="535px"
-                  rounded
-                  bordered
-                  label="Address Line-1"
-                  placeholder="Address Line-1"
-                  color="primary"
-                  onChange={(e) => {
-                    const setFirstAddress = e.target.value;
-                    setAddress1(setFirstAddress);
-                  }}
-                />
-              </Grid>
-              <Grid  xs={6} >
-                <Input
-                  width="535px"
-                  rounded
-                  bordered
-                  label="Address Line-2"
-                  placeholder="Address Line-2"
-                  color="primary"
-                  onChange={(e) => {
-                    const setSecondAddress = e.target.value;
-                    setAddress2(setSecondAddress);
-                  }}
-                />
-              </Grid>
+              </Grid> */}
+              
               {/* <Grid className={styles.Grid}>
                 <Input
                   className={styles.Input}
@@ -291,61 +314,7 @@ export default function PatientRegistration() {
               
             </Grid.Container>
             {/* Dynamic Ailment */}
-            <Grid.Container>
-              <Row>
-                <Container className={styles.ailmentContainerTitle}>Existing Ailments, if any:</Container>
-              </Row>
-              <Container className={styles.ailmentsRowsContainer}>
-              {ailments.map((ailment, index) => (
-              <Row key={index}>
-                  <Grid xs={4}>
-                    <Input
-                      className={styles.ailmentsInput}
-                      rounded
-                      bordered
-                      label="Ailment"
-                      placeholder="Ailment"
-                      color="primary"
-                      name="ailment"
-                      value={ailment.ailment}
-                      onChange={(event) => handleChangeInput(index, event)}
-                    />
-                  </Grid>
-                  <Grid xs={4}>
-                    <Input
-                      className={styles.ailmentsInput}
-                      rounded
-                      bordered
-                      label="Comment"
-                      placeholder="Comment"
-                      color="primary"
-                      name="comment"
-                      value={ailment.comment}
-                      onChange={(event) => handleChangeInput(index, event)}
-                    />
-                  </Grid>
-
-                  <Grid className={styles.Grid}>
-                    <Button
-                      css={{ my: "$12", mx: "$10", width: "50px" }}
-                      shadow
-                      color='warning'
-                      size="sm"
-                      onClick={() => handleRemoveField(index)}
-                    >
-                      Remove
-                    </Button>
-                  </Grid>
-              </Row>
-            ))}
-            </Container>
-            </Grid.Container>
-            <Button
-              css={{ my: "$5", mx: "$12", width: "50px" }}
-              shadow
-              size="sm"
-              onClick={() => handleAddField()}
-            >Add Ailment</Button>
+           
 
             {/*Dynamic Ailment End  */}
           </form>
@@ -359,7 +328,7 @@ export default function PatientRegistration() {
           color="success"
           auto
           type="submit"
-          onClick={handleSubmit}
+          onClick={(e) => handleSubmit(e)}
         >
           Submit
         </Button>
