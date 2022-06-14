@@ -3,7 +3,7 @@ import { Container, Card, Row, Grid, Input, Button } from "@nextui-org/react";
 import styles from "../styles/Patient.module.css";
 import { useRouter } from "next/router";
 import { GET_ENCOUNTER_TYPES, CREATE_NEW_PATIENT } from "../graphql/querys";
-import {useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 import Header from "../components/Header";
 
@@ -24,12 +24,18 @@ export default function PatientRegistration() {
   // const [ailments, setAilments] = useState([]);
   // const [encounterTypes, setEncounterTypes] = useState([]);
   // const [encounterType, setEncounterType] = useState('');
-  
-  const genderItems = ['Male', 'Female', 'Other']
-  
-  const [createPatient, { loading: createPatientLoading, data: createPatientData, error: createPatientError }] = useMutation(CREATE_NEW_PATIENT);
-  // const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
 
+  const genderItems = ["Male", "Female", "Other"];
+
+  const [
+    createPatient,
+    {
+      loading: createPatientLoading,
+      data: createPatientData,
+      error: createPatientError,
+    },
+  ] = useMutation(CREATE_NEW_PATIENT);
+  // const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
 
   // React.useEffect(() => {
   //   if (encounterTypesData) {
@@ -41,24 +47,27 @@ export default function PatientRegistration() {
   React.useEffect(() => {
     if (!createPatientLoading) {
       if (createPatientError) {
-        console.log(createPatientError.message)
-        alert("Error in creating patients data!! Try again later.")
-        return
+        console.log(createPatientError.message);
+        alert("Error in creating patients data!! Try again later.");
+        return;
       } else {
         if (createPatientData) {
-          var data = createPatientData.fetchPatientGeneral
-          alert("Success")
+          var data = createPatientData.fetchPatientGeneral;
+          alert("Success");
           // setError(null)
           // redirect generate-slip
         }
       }
     }
-  }, [createPatientLoading])
+  }, [createPatientLoading]);
 
   const checkValues = () => {
     if (fullName === "") {
       return { status: true, msg: "Please Enter Full Name" };
-    } else if (contact === "" || !(/^[0-9]{10}(\s*,*,\s*[0-9]{10})*$/.test(parseInt(contact)))) {
+    } else if (
+      contact === "" ||
+      !/^[0-9]{10}(\s*,*,\s*[0-9]{10})*$/.test(parseInt(contact))
+    ) {
       return { status: true, msg: "Please Enter Valid contact" };
     } else if (gender === "") {
       return { status: true, msg: "Please Select Gender" };
@@ -68,16 +77,19 @@ export default function PatientRegistration() {
       return { status: true, msg: "Please Enter state" };
     } else if (city === "") {
       return { status: true, msg: "Please Enter City" };
-    } else if (pincode === "" || !(/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(pincode)))) {
+    } else if (
+      pincode === "" ||
+      !/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(pincode))
+    ) {
       return { status: true, msg: "Please Enter valid pincode" };
     } else {
       return { status: false };
     }
   };
 
-//   checkPinCode = val => {
-//     return (/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(val)))
-// }
+  //   checkPinCode = val => {
+  //     return (/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(val)))
+  // }
 
   // const handleChangeInput = (index, event) => {
   //   const values = [...ailments];
@@ -133,170 +145,168 @@ export default function PatientRegistration() {
   }
   return (
     <>
-    <Header/>
-    <Container className={styles.padding}>
-      <Card css={{padding: '30px 0'}}>
-        <Row>
-          <Container className={styles.formTitle}>Patient Information</Container>
-        </Row>
-        <Row>
-          {/* Grid */}
-          <form>
-            <Grid.Container
-              className={styles.padding}
-              gap={2}
-             
-            >
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.fullNameInput}
-                  rounded
-                  bordered
-                  label="Full Name *"
-                  placeholder="Full Name"
-                  color="primary"
-                  onChange={(e) => {
-                    const setFullNameState = e.target.value;
-                    setFullName(setFullNameState);
-                  }}
-                />
-              </Grid>
-
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.contactNoInput}
-                  rounded
-                  bordered
-                  label="Contact Number *"
-                  placeholder="Contact Number"
-                  color="primary"
-                  onChange={(e) => {
-                    const setContactState = e.target.value;
-                    setContact(setContactState);
-                  }}
-                />
-              </Grid>
-
-              <Grid className={styles.Grid}>
-                <DropdownCustom  label={'Gender *'} items={genderItems} value={gender} handleChange={setGender}/>
-              </Grid>
-              
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.dobInput}
-                  type="date"
-                  rounded
-                  bordered
-                  label="Date of Birth *"
-                  placeholder="DOB"
-                  color="primary"
-                  onChange={(e) => {
-                    const setDobState = e.target.value;
-                    setDob(setDobState);
-                  }}
-                />
-              </Grid>
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.pincodeInput}
-                  rounded
-                  bordered
-                  label="Pincode *"
-                  placeholder="Pincode"
-                  color="primary"
-                  onChange={(e) => {
-                    const setPincodeState = e.target.value;
-                    setPincode(setPincodeState);
-                  }}
-                />
-              </Grid>
-              <Row>
-                <Grid.Container gap={3}>
+      <Header />
+      <Container className={styles.padding}>
+        <Card css={{ padding: "30px 0" }}>
+          <Row>
+            <Container className={styles.formTitle}>
+              Patient Information
+            </Container>
+          </Row>
+          <Row>
+            {/* Grid */}
+            <form>
+              <Grid.Container className={styles.padding} gap={2}>
                 <Grid className={styles.Grid}>
-                <Input
-                  className={styles.addressInput}
-                  rounded
-                  bordered
-                  label="Address Line-1"
-                  placeholder="Address Line-1"
-                  color="primary"
-                  onChange={(e) => {
-                    const setFirstAddress = e.target.value;
-                    setAddress1(setFirstAddress);
-                  }}
-                />
-              </Grid>
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.addressInput}
-                  rounded
-                  bordered
-                  label="Address Line-2"
-                  placeholder="Address Line-2"
-                  color="primary"
-                  onChange={(e) => {
-                    const setSecondAddress = e.target.value;
-                    setAddress2(setSecondAddress);
-                  }}
-                />
-              </Grid>
+                  <Input
+                    className={styles.fullNameInput}
+                    rounded
+                    bordered
+                    label="Full Name *"
+                    placeholder="Full Name"
+                    color="primary"
+                    onChange={(e) => {
+                      const setFullNameState = e.target.value;
+                      setFullName(setFullNameState);
+                    }}
+                  />
+                </Grid>
 
-                </Grid.Container>
-              
-              </Row>
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.cityInput}
-                  rounded
-                  bordered
-                  label="City *"
-                  placeholder="City"
-                  color="primary"
-                  onChange={(e) => {
-                    const setCityState = e.target.value;
-                    setCity(setCityState);
-                  }}
-                />
-              </Grid>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.contactNoInput}
+                    rounded
+                    bordered
+                    label="Contact Number *"
+                    placeholder="Contact Number"
+                    color="primary"
+                    onChange={(e) => {
+                      const setContactState = e.target.value;
+                      setContact(setContactState);
+                    }}
+                  />
+                </Grid>
 
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.districtInput}
-                  rounded
-                  bordered
-                  label="District"
-                  placeholder="District"
-                  color="primary"
-                  onChange={(e) => {
-                    const setDistrictState = e.target.value;
-                    setDistrict(setDistrictState);
-                  }}
-                />
-              </Grid>
-              
-              <Grid className={styles.Grid}>
-                <Input
-                  className={styles.stateInput}
-                  rounded
-                  bordered
-                  label="State *"
-                  placeholder="State"
-                  color="primary"
-                  onChange={(e) => {
-                    const setStateName = e.target.value;
-                    setState(setStateName);
-                  }}
-                />
-              </Grid>
-              
-              
-              
-              
-              {/* <Grid>
+                <Grid className={styles.Grid}>
+                  <DropdownCustom
+                    label={"Gender *"}
+                    items={genderItems}
+                    value={gender}
+                    handleChange={setGender}
+                  />
+                </Grid>
+
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.dobInput}
+                    type="date"
+                    rounded
+                    bordered
+                    label="Date of Birth *"
+                    placeholder="DOB"
+                    color="primary"
+                    onChange={(e) => {
+                      const setDobState = e.target.value;
+                      setDob(setDobState);
+                    }}
+                  />
+                </Grid>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.pincodeInput}
+                    rounded
+                    bordered
+                    label="Pincode *"
+                    placeholder="Pincode"
+                    color="primary"
+                    onChange={(e) => {
+                      const setPincodeState = e.target.value;
+                      setPincode(setPincodeState);
+                    }}
+                  />
+                </Grid>
+                <Row>
+                  <Grid.Container gap={3}>
+                    <Grid className={styles.Grid}>
+                      <Input
+                        className={styles.addressInput}
+                        rounded
+                        bordered
+                        label="Address Line-1"
+                        placeholder="Address Line-1"
+                        color="primary"
+                        onChange={(e) => {
+                          const setFirstAddress = e.target.value;
+                          setAddress1(setFirstAddress);
+                        }}
+                      />
+                    </Grid>
+                    <Grid className={styles.Grid}>
+                      <Input
+                        className={styles.addressInput}
+                        rounded
+                        bordered
+                        label="Address Line-2"
+                        placeholder="Address Line-2"
+                        color="primary"
+                        onChange={(e) => {
+                          const setSecondAddress = e.target.value;
+                          setAddress2(setSecondAddress);
+                        }}
+                      />
+                    </Grid>
+                  </Grid.Container>
+                </Row>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.cityInput}
+                    rounded
+                    bordered
+                    label="City *"
+                    placeholder="City"
+                    color="primary"
+                    onChange={(e) => {
+                      const setCityState = e.target.value;
+                      setCity(setCityState);
+                    }}
+                  />
+                </Grid>
+
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.districtInput}
+                    rounded
+                    bordered
+                    label="District"
+                    placeholder="District"
+                    color="primary"
+                    onChange={(e) => {
+                      const setDistrictState = e.target.value;
+                      setDistrict(setDistrictState);
+                    }}
+                  />
+                </Grid>
+
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.stateInput}
+                    rounded
+                    bordered
+                    label="State *"
+                    placeholder="State"
+                    color="primary"
+                    onChange={(e) => {
+                      const setStateName = e.target.value;
+                      setState(setStateName);
+                    }}
+                  />
+                </Grid>
+
+                {/* <Grid>
                 <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
               </Grid> */}
-              
-              {/* <Grid className={styles.Grid}>
+
+                {/* <Grid className={styles.Grid}>
                 <Input
                   className={styles.Input}
                   rounded
@@ -310,30 +320,27 @@ export default function PatientRegistration() {
                   }}
                 />
               </Grid> */}
-              
-              
-            </Grid.Container>
-            {/* Dynamic Ailment */}
-           
+              </Grid.Container>
+              {/* Dynamic Ailment */}
 
-            {/*Dynamic Ailment End  */}
-          </form>
-          {/* Grid End */}
-        </Row>
-      </Card>
+              {/*Dynamic Ailment End  */}
+            </form>
+            {/* Grid End */}
+          </Row>
+        </Card>
 
-      <div className={styles.container}>
-        <Button
-          size="xl"
-          color="success"
-          auto
-          type="submit"
-          onClick={(e) => handleSubmit(e)}
-        >
-          Submit
-        </Button>
-      </div>
-    </Container>
+        <div className={styles.container}>
+          <Button
+            size="xl"
+            color="success"
+            auto
+            type="submit"
+            onClick={(e) => handleSubmit(e)}
+          >
+            Submit
+          </Button>
+        </div>
+      </Container>
     </>
   );
 }
