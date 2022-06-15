@@ -5,6 +5,7 @@ import { gql} from "@apollo/client";
       id
     }
   }`;
+                
 
   const GET_PATIENT_DATA =gql`query FetchPatientByPhoneNo($phoneNo: Float!) {
     fetchPatientByPhoneNo(phoneNo: $phoneNo) {

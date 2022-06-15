@@ -1,11 +1,26 @@
 .formTitle {
   font-size: 25px;
   color: green;
+  padding: 20px 0px 0px 30px;
 }
 
+.fullNameInput, .contactNoInput, .genderInput, .cityInput, .districtInput, .stateInput, .pincodeInput, .dobInput{
+  width: 20vw;
+  min-width: 250px;
+}
+/* .fullNameInput label:after {
+  content:"*";
+  color: red;
+} */
+.addressInput{
+  width: 30vw;
+  color: primary;
+  min-width: 250px;
+} 
 .Input {
   width: 20vw;
   color: primary;
+  min-width: 200px;
 }
 
 .ailmentContainerTitle {
@@ -31,7 +46,9 @@
 .padding {
   padding: 2vw 2vh;
 }
-
+.Grid{
+  padding: 1.5rem;
+}
 .container {
   width: auto;
   height: 100px;

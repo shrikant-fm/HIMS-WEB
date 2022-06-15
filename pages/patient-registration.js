@@ -25,9 +25,26 @@ export default function PatientRegistration() {
   
   const genderItems = [{text: 'Male', value: 'Male'}, {text: 'Female', value: 'Female'}, {text: 'Other', value: 'Other'}]
   
-  const [createPatient, { loading: createPatientLoading, data: createPatientData, error: createPatientError }] = useMutation(CREATE_NEW_PATIENT);
-  const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
+  // const [ailments, setAilments] = useState([]);
+  // const [encounterTypes, setEncounterTypes] = useState([]);
+  // const [encounterType, setEncounterType] = useState('');
 
+  const [
+    createPatient,
+    {
+      loading: createPatientLoading,
+      data: createPatientData,
+      error: createPatientError,
+    },
+  ] = useMutation(CREATE_NEW_PATIENT);
+  // const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
+
+  // React.useEffect(() => {
+  //   if (encounterTypesData) {
+  //     var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
+  //     setEncounterTypes(data)
+  //   }
+  // }, [encounterTypesLoading])
 
   // React.useEffect(() => {
   //   if (encounterTypesData) {
@@ -57,45 +74,49 @@ export default function PatientRegistration() {
   const checkValues = () => {
     if (fullName === "") {
       return { status: true, msg: "Please Enter Full Name" };
+    } else if (
+      contact === "" ||
+      !/^[0-9]{10}(\s*,*,\s*[0-9]{10})*$/.test(parseInt(contact))
+    ) {
+      return { status: true, msg: "Please Enter Valid contact" };
     } else if (gender === "") {
       return { status: true, msg: "Please Select Gender" };
-    } else if (contact === "") {
-      return { status: true, msg: "Please Enter contact" };
-    } else if (state === "") {
-      return { status: true, msg: "Please Enter state" };
-    } else if (district === "") {
-      return { status: true, msg: "Please Enter district" };
-    } else if (city === "") {
-      return { status: true, msg: "Please Enter City" };
-    } else if (pincode === "") {
-      return { status: true, msg: "Please Enter pincode" };
-    } else if (address1 === "") {
-      return { status: true, msg: "Please Enter address line 1" };
-    } else if (address2 === "") {
-      return { status: true, msg: "Please Enter address line 2" };
     } else if (dob === "") {
       return { status: true, msg: "Please Enter Date Of Birth" };
+    } else if (state === "") {
+      return { status: true, msg: "Please Enter state" };
+    } else if (city === "") {
+      return { status: true, msg: "Please Enter City" };
+    } else if (
+      pincode === "" ||
+      !/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(pincode))
+    ) {
+      return { status: true, msg: "Please Enter valid pincode" };
     } else {
       return { status: false };
     }
   };
 
-  const handleChangeInput = (index, event) => {
-    const values = [...ailments];
-    values[index][event.target.name] = event.target.value;
-    setAilments(values);
-  };
+  //   checkPinCode = val => {
+  //     return (/^[0-9]{6}(\s*,*,\s*[0-9]{6})*$/.test(parseInt(val)))
+  // }
 
-  const handleAddField = () => {
-    setAilments([...ailments, { ailment: "", comment: "" }]);
-  };
+  // const handleChangeInput = (index, event) => {
+  //   const values = [...ailments];
+  //   values[index][event.target.name] = event.target.value;
+  //   setAilments(values);
+  // };
 
-  const handleRemoveField = (index) => {
-    const values = [...ailments];
-    console.log(values)
-    values.splice(index, 1);
-    setAilments(values);
-  };
+  // const handleAddField = () => {
+  //   setAilments([...ailments, { ailment: "", comment: "" }]);
+  // };
+
+  // const handleRemoveField = (index) => {
+  //   const values = [...ailments];
+  //   console.log(values)
+  //   values.splice(index, 1);
+  //   setAilments(values);
+  // };
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -110,69 +131,71 @@ export default function PatientRegistration() {
           dateOfBirth: dob,
           phoneNo: parseInt(contact),
           gender: gender,
+          // address: address1.concat(" ", address2),
           addressLine1: address1,
           addressLine2: address2,
           district: district,
           city: city,
           state: state,
-          pincode: parseInt(pincode)
+          pincode: parseInt(pincode),
+          // encounterType: encounterTypesData.allEncounterType.find(en => en.encounterType === encounterType)?.id,
+          // existingAilments: ailments
         },
       });
-      if (createPatientData) {
-        console.log(createPatientData);
-        alert('Data entered successfully')
-        router.push('/generate-slip')
-      } else if (createPatientError) {
-        console.log(createPatientError instanceof Error);
-      }
+      // if (createPatientData) {
+      //   console.log(createPatientData);
+      //   alert('Data entered successfully')
+      //   // window.location.reload()
+      //   router.push('/generate-slip')
+      // } else if (createPatientError) {
+      //   console.log(createPatientError instanceof Error);
+      // }
       //  const patient = await CreatePatient(body);
     }
   }
   return (
     <>
-    <Header/>
-    <Container className={styles.padding}>
-      <Card>
-        <Row>
-          <Container className={styles.formTitle}>Patient Information</Container>
-        </Row>
-        <Row>
-          {/* Grid */}
-          <form>
-            <Grid.Container
-              className={styles.padding}
-              gap={2}
-              justify="space-between"
-            >
-              <Grid xs={4}>
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="Full Name"
-                  placeholder="Full Name"
-                  color="primary"
-                  onChange={(e) => {
-                    const setFullNameState = e.target.value;
-                    setFullName(setFullNameState);
-                  }}
-                />
-              </Grid>
+      <Header />
+      <Container className={styles.padding}>
+        <Card css={{ padding: "30px 0" }}>
+          <Row>
+            <Container className={styles.formTitle}>
+              Patient Information
+            </Container>
+          </Row>
+          <Row>
+            {/* Grid */}
+            <form>
+              <Grid.Container className={styles.padding} gap={2}>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.fullNameInput}
+                    rounded
+                    bordered
+                    label="Full Name *"
+                    placeholder="Full Name"
+                    color="primary"
+                    onChange={(e) => {
+                      const setFullNameState = e.target.value;
+                      setFullName(setFullNameState);
+                    }}
+                  />
+                </Grid>
 
-              <Grid xs={4} >
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="Contact Number"
-                  placeholder="Contact Number"
-                  color="primary"
-                  onChange={(e) => {
-                    const setContactState = e.target.value;
-                    setContact(setContactState);
-                  }}
-                />
-              </Grid>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.contactNoInput}
+                    rounded
+                    bordered
+                    label="Contact Number *"
+                    placeholder="Contact Number"
+                    color="primary"
+                    onChange={(e) => {
+                      const setContactState = e.target.value;
+                      setContact(setContactState);
+                    }}
+                  />
+                </Grid>
 
               <Grid xs={4} >
                 <DropdownCustom label={'Gender'} value={gender} items={genderItems} handleChange={setGender}/>
@@ -193,23 +216,105 @@ export default function PatientRegistration() {
                   }}
                 />
               </Grid>
+                <Grid className={styles.Grid}>
+                  <DropdownCustom
+                    label={"Gender *"}
+                    items={genderItems}
+                    value={gender}
+                    handleChange={setGender}
+                  />
+                </Grid>
 
-              
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.dobInput}
+                    type="date"
+                    rounded
+                    bordered
+                    label="Date of Birth *"
+                    placeholder="DOB"
+                    color="primary"
+                    onChange={(e) => {
+                      const setDobState = e.target.value;
+                      setDob(setDobState);
+                    }}
+                  />
+                </Grid>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.pincodeInput}
+                    rounded
+                    bordered
+                    label="Pincode *"
+                    placeholder="Pincode"
+                    color="primary"
+                    onChange={(e) => {
+                      const setPincodeState = e.target.value;
+                      setPincode(setPincodeState);
+                    }}
+                  />
+                </Grid>
+                <Row>
+                  <Grid.Container gap={3}>
+                    <Grid className={styles.Grid}>
+                      <Input
+                        className={styles.addressInput}
+                        rounded
+                        bordered
+                        label="Address Line-1"
+                        placeholder="Address Line-1"
+                        color="primary"
+                        onChange={(e) => {
+                          const setFirstAddress = e.target.value;
+                          setAddress1(setFirstAddress);
+                        }}
+                      />
+                    </Grid>
+                    <Grid className={styles.Grid}>
+                      <Input
+                        className={styles.addressInput}
+                        rounded
+                        bordered
+                        label="Address Line-2"
+                        placeholder="Address Line-2"
+                        color="primary"
+                        onChange={(e) => {
+                          const setSecondAddress = e.target.value;
+                          setAddress2(setSecondAddress);
+                        }}
+                      />
+                    </Grid>
+                  </Grid.Container>
+                </Row>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.cityInput}
+                    rounded
+                    bordered
+                    label="City *"
+                    placeholder="City"
+                    color="primary"
+                    onChange={(e) => {
+                      const setCityState = e.target.value;
+                      setCity(setCityState);
+                    }}
+                  />
+                </Grid>
 
-              <Grid xs={4} >
-                <Input
-                  className={styles.Input}
-                  rounded
-                  bordered
-                  label="City"
-                  placeholder="City"
-                  color="primary"
-                  onChange={(e) => {
-                    const setCityState = e.target.value;
-                    setCity(setCityState);
-                  }}
-                />
-              </Grid>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.districtInput}
+                    rounded
+                    bordered
+                    label="District"
+                    placeholder="District"
+                    color="primary"
+                    onChange={(e) => {
+                      const setDistrictState = e.target.value;
+                      setDistrict(setDistrictState);
+                    }}
+                  />
+                </Grid>
 
               <Grid xs={4} >
                 <Input
@@ -289,6 +394,26 @@ export default function PatientRegistration() {
                 />
               </Grid>
               {/* <Grid className={styles.Grid}>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.stateInput}
+                    rounded
+                    bordered
+                    label="State *"
+                    placeholder="State"
+                    color="primary"
+                    onChange={(e) => {
+                      const setStateName = e.target.value;
+                      setState(setStateName);
+                    }}
+                  />
+                </Grid>
+
+                {/* <Grid>
+                <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
+              </Grid> */}
+
+                {/* <Grid className={styles.Grid}>
                 <Input
                   className={styles.Input}
                   rounded
@@ -361,25 +486,27 @@ export default function PatientRegistration() {
               size="sm"
               onClick={() => handleAddField()}
             >Add Ailment</Button> */}
+              {/* </Grid.Container> */}
+              {/* Dynamic Ailment */}
 
-            {/*Dynamic Ailment End  */}
-          </form>
-          {/* Grid End */}
-        </Row>
-      </Card>
+              {/*Dynamic Ailment End  */}
+            </form>
+            {/* Grid End */}
+          </Row>
+        </Card>
 
-      <div className={styles.container}>
-        <Button
-          size="xl"
-          color="success"
-          auto
-          type="submit"
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-      </div>
-    </Container>
+        <div className={styles.container}>
+          <Button
+            size="xl"
+            color="success"
+            auto
+            type="submit"
+            onClick={(e) => handleSubmit(e)}
+          >
+            Submit
+          </Button>
+        </div>
+      </Container>
     </>
   );
 }

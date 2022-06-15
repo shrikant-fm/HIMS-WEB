@@ -244,7 +244,7 @@ export default function GenerateSlip() {
     {!selectedPatient ?
     <>
     <Container className={styles.padding}>
-      <Card>
+      <Card css={{padding: '30px 0'}}>
         <Row>
           <Container className={styles.formTitle}>Search/Select Patient</Container>
         </Row>
@@ -253,7 +253,7 @@ export default function GenerateSlip() {
           <form>
             <Grid.Container
               className={styles.padding}
-              gap={2}
+              gap={3}
             >
               <Grid className={styles.Grid}>
                 <Input

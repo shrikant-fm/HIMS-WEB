@@ -3,8 +3,8 @@
     color: green;
 }
 
-.fullNameInput, .contactNoInput, .genderInput {
-  width: 20vw;
+.doctorName, .contactNoInput, .genderInput {
+  width: 10vw;
   min-width: 250px;
 }
 
@@ -33,8 +33,8 @@
   }
 
   .ailmentsInput {
-    width: 20vw;
-    margin: 0 10px 0 0;
+    width: 10vw;
+    
   }
   
   /* .center {
@@ -55,8 +55,8 @@
     align-items: center;
   }
 
-@media only screen and (max-width: 600px) {
+/* @media only screen and (max-width: 600px) {
   .enctrTypeTextInput {
     margin-top: 10px;
   }
-}
+} */
