@@ -14,7 +14,7 @@ const router = useRouter();
   }
 
   const routeUploadPrescription=(e)=>{
-    router.push('/Upload')
+    router.push('/upload-prescription')
   }
 
   return (

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Card, Row, Grid, Input, Button, Table } from "@nextui-org/react";
 import styles from "../styles/generate-slip.module.css";
 import { useRouter } from "next/router";
-import { GET_PATIENT_DATA_GENERAL, CREATE_ENCOUNTER, GET_ENCOUNTER_TYPES } from "../graphql/querys";
+import { GET_PATIENT_DATA_FILTERED, CREATE_PATIENT_ENCOUNTER, GET_ENCOUNTER_TYPES } from "../graphql/strapi-query";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 import Header from "../components/Header";
@@ -23,37 +23,78 @@ export default function GenerateSlip() {
   const [selectedPatient, setSelectedPatient] = useState(null)
   const [encounterTypes, setEncounterTypes] = useState([]);
   const [selectedEncounterType, setSelectedEncounterType] = useState(null)
+  const [getEncounterTypeText, setGetEncounterTypeText] = useState(null)
   const [encounterTypeText, setEncounterTypeText] = useState(null)
   const [primaryComplaint, setPrimaryComplaint] = useState(null)
   const [secondaryComplaint, setSecondaryComplaint] = useState(null)
 
-  const genderItems = ['Male', 'Female', 'Other']
+  const genderItems = [{text: 'Male', value: 'Male'}, {text: 'Female', value: 'Female'}, {text: 'Other', value: 'Other'}]
 
-  const [getPatientsData, { loading: patientsDataLoading, data: patientsData, error: patientsDataError }] = useLazyQuery(GET_PATIENT_DATA_GENERAL, {fetchPolicy: 'network-only'})
-  const [createEncounter, { loading: createEncounterLoading, data: createEncounterData, error: createEncounterError }] = useMutation(CREATE_ENCOUNTER);
+  const [getPatientsData, { loading: patientsDataLoading, data: patientsData, error: patientsDataError }] = useLazyQuery(GET_PATIENT_DATA_FILTERED, {fetchPolicy: 'network-only'})
+  const [createEncounter, { loading: createEncounterLoading, data: createEncounterData, error: createEncounterError }] = useMutation(CREATE_PATIENT_ENCOUNTER);
   const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
 
   React.useEffect(() => {
     if (encounterTypesData) {
-      var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
+      var data = encounterTypesData.encounterCatalogs.data.map(en => {return({
+        value: en.id,
+        text: en.attributes.encounterType
+      })})
       setEncounterTypes(data)
     }
   }, [encounterTypesLoading])
 
+  React.useEffect(() => {
+    if (selectedEncounterType) {
+      if (encounterTypes.find(e => e.value == selectedEncounterType)?.text == "Other") {
+        setGetEncounterTypeText(true)
+      } else {
+        setGetEncounterTypeText(false)
+      }
+    } else {
+      setGetEncounterTypeText(false)
+    }
+  }, [selectedEncounterType])
+
   const handleSubmit = async(e) => {
     e.preventDefault()
-    getPatientsData(
-      {
-        variables: {
-          patientName: fullName != "" ? fullName : null,
-          phoneNo: contact != "" ? parseFloat(contact) : null,
-          gender: gender != "" ? gender : null,
-          dateOfBirth: dob != "" ? dob : null,
-          city: city != "" ? city : null,
-          pincode: pincode != "" ? parseInt(pincode) : null
-        }
+    // getPatientsData(
+    //   {
+    //     variables: {
+    //       patientName: fullName != "" ? fullName : null,
+    //       phoneNo: contact != "" ? parseFloat(contact) : null,
+    //       gender: gender != "" ? gender : null,
+    //       dateOfBirth: dob != "" ? dob : null,
+    //       city: city != "" ? city : null,
+    //       pincode: pincode != "" ? parseInt(pincode) : null
+    //     }
+    //   }
+    // )
+    // creating filters for the query
+    var filterArray = []
+    if (fullName && !fullName == "") {
+      filterArray.push({ patientName: { containsi: fullName } })
+    }
+    if (gender && !gender == "") {
+      filterArray.push({ gender: { eq: gender } })
+    }
+    if (contact && !contact == "") {
+      filterArray.push({ phoneNo: { eq: parseInt(contact) } })
+    }
+    if (city && !city == "") {
+      filterArray.push({ city: { containsi: city } })
+    }
+    if (pincode && !pincode == "") {
+      filterArray.push({ pincode: { eq: parseInt(pincode) } })
+    }
+    if (dob && !dob == "") {
+      filterArray.push({ dateOfBirth: { eq: dob } })
+    }
+    getPatientsData({
+      variables: {
+        filter: filterArray
       }
-    )
+    })
   }
 
   const handleGenerateSlip = async(e) => {
@@ -62,14 +103,14 @@ export default function GenerateSlip() {
       alert("Choose reason for visit")
       return
     }
-    if (selectedEncounterType == "Other" && encounterTypeText == null) {
+    if (getEncounterTypeText && encounterTypeText == null) {
       alert('Enter reason to visit')
       return
     }
     await createEncounter({
       variables: {
-        patientId: selectedPatient.id,
-        encounterCatalogId: encounterTypesData.allEncounterType.find(en => en.encounterType === selectedEncounterType)?.id,
+        patientId: parseInt(selectedPatient.id),
+        encounterTypeId: parseInt(selectedEncounterType),
         encounterTypeText: encounterTypeText,
         primaryComplaint: primaryComplaint,
         secondaryComplaint: secondaryComplaint
@@ -85,7 +126,7 @@ export default function GenerateSlip() {
         return
       } else {
         if (patientsData) {
-          var data = patientsData.fetchPatientGeneral
+          var data = patientsData.patientCatalogs.data
           setPatients(data)
           setError(null)
           return
@@ -102,8 +143,9 @@ export default function GenerateSlip() {
         return
       } else {
         if (createEncounterData) {
+          console.log(createEncounterData)
           setError(null)
-          alert("Slip generated successfully. Encounter id: " + createEncounterData.createPatientEncounter.id)
+          alert("Slip generated successfully. Encounter id: " + createEncounterData.createPatientEncounter.data.id)
           window.location.reload()
         }
       }
@@ -426,12 +468,12 @@ export default function GenerateSlip() {
                 <Table.Row key={i}>
                   <Table.Cell css={{textAlign: 'center'}}>
                     <Container>
-                      <Button className={styles.patientNameBtn} onClick={() => selectPatient(patient.id)}>{patient.patientName}</Button>
+                      <Button className={styles.patientNameBtn} onClick={() => selectPatient(patient.id)}>{patient.attributes.patientName}</Button>
                     </Container>
                   </Table.Cell>
-                  <Table.Cell css={{textAlign: 'center'}}>{patient.phoneNo}</Table.Cell>
-                  <Table.Cell css={{textAlign: 'center'}}>{patient.gender}</Table.Cell>
-                  <Table.Cell css={{textAlign: 'center'}}>{patient.dateOfBirth ? calculateAge(patient.dateOfBirth) : '-'}</Table.Cell>
+                  <Table.Cell css={{textAlign: 'center'}}>{patient.attributes.phoneNo}</Table.Cell>
+                  <Table.Cell css={{textAlign: 'center'}}>{patient.attributes.gender}</Table.Cell>
+                  <Table.Cell css={{textAlign: 'center'}}>{patient.attributes.dateOfBirth ? calculateAge(patient.attributes.dateOfBirth) : '-'}</Table.Cell>
                 </Table.Row>
               )
             }) :
@@ -456,13 +498,13 @@ export default function GenerateSlip() {
         <Row>
           Selected Patient:
         </Row>
-        <PatientDataCard data={selectedPatient}/>
+        <PatientDataCard data={selectedPatient.attributes}/>
         <Container css={{marginTop: '20px'}}>
           <Grid.Container gap={2}>
             <Grid>
               <DropdownCustom label={'Reason for visit'} items={encounterTypes} value={selectedEncounterType} handleChange={setSelectedEncounterType}/>
             </Grid>
-            {selectedEncounterType && selectedEncounterType == "Other" ?
+            {getEncounterTypeText ?
             <Grid>
               <Input
                 className={styles.enctrTypeTextInput}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Card, Row, Grid, Input, Button } from "@nextui-org/react";
 import styles from "../styles/Patient.module.css";
 import { useRouter } from "next/router";
-import { GET_ENCOUNTER_TYPES, NEW_PATIENT } from "../graphql/querys";
+import { GET_ENCOUNTER_TYPES, CREATE_NEW_PATIENT } from "../graphql/strapi-query";
 import {useMutation, useQuery } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 import Header from "../components/Header";
@@ -22,21 +22,37 @@ export default function PatientRegistration() {
   const [pincode, setPincode] = useState("");
   const [dob, setDob] = useState("");
   const [ailments, setAilments] = useState([]);
-  const [encounterTypes, setEncounterTypes] = useState([]);
-  const [encounterType, setEncounterType] = useState('');
   
-  const genderItems = ['Male', 'Female', 'Other']
+  const genderItems = [{text: 'Male', value: 'Male'}, {text: 'Female', value: 'Female'}, {text: 'Other', value: 'Other'}]
   
-  const [createPatient, { data: createPatientData, error: createPatientError }] = useMutation(NEW_PATIENT);
+  const [createPatient, { loading: createPatientLoading, data: createPatientData, error: createPatientError }] = useMutation(CREATE_NEW_PATIENT);
   const { loading: encounterTypesLoading, data: encounterTypesData, error: encounterTypesError } = useQuery(GET_ENCOUNTER_TYPES)
 
 
+  // React.useEffect(() => {
+  //   if (encounterTypesData) {
+  //     var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
+  //     setEncounterTypes(data)
+  //   }
+  // }, [encounterTypesLoading])
+
   React.useEffect(() => {
-    if (encounterTypesData) {
-      var data = encounterTypesData.allEncounterType.map(en => {return(en.encounterType)})
-      setEncounterTypes(data)
+    if (!createPatientLoading) {
+      if (createPatientError) {
+        console.log(createPatientError.message);
+        alert("Error in creating patients data!! Try again later.");
+        return;
+      } else {
+        if (createPatientData) {
+          // var data = createPatientData.fetchPatientGeneral;
+          alert("Success");
+          // setError(null)
+          // redirect generate-slip
+          router.push('/generate-slip')
+        }
+      }
     }
-  }, [encounterTypesLoading])
+  }, [createPatientLoading]);
 
   const checkValues = () => {
     if (fullName === "") {
@@ -94,19 +110,18 @@ export default function PatientRegistration() {
           dateOfBirth: dob,
           phoneNo: parseInt(contact),
           gender: gender,
-          address: address1.concat(" ", address2),
+          addressLine1: address1,
+          addressLine2: address2,
           district: district,
           city: city,
           state: state,
-          pincode: parseInt(pincode),
-          encounterType: encounterTypesData.allEncounterType.find(en => en.encounterType === encounterType)?.id,
-          existingAilments: ailments
+          pincode: parseInt(pincode)
         },
       });
       if (createPatientData) {
         console.log(createPatientData);
         alert('Data entered successfully')
-        window.location.reload()
+        router.push('/generate-slip')
       } else if (createPatientError) {
         console.log(createPatientError instanceof Error);
       }
@@ -160,7 +175,7 @@ export default function PatientRegistration() {
               </Grid>
 
               <Grid xs={4} >
-                <DropdownCustom label={'Gender'} items={genderItems} handleChange={setGender}/>
+                <DropdownCustom label={'Gender'} value={gender} items={genderItems} handleChange={setGender}/>
               </Grid>
               
               <Grid xs={4}>
@@ -242,9 +257,9 @@ export default function PatientRegistration() {
                 />
               </Grid>
               
-              <Grid xs={4}>
+              {/* <Grid xs={4}>
                 <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
-              </Grid>
+              </Grid> */}
               <Grid  xs={6}>
                 <Input
                   width="535px"
@@ -291,7 +306,7 @@ export default function PatientRegistration() {
               
             </Grid.Container>
             {/* Dynamic Ailment */}
-            <Grid.Container>
+            {/* <Grid.Container>
               <Row>
                 <Container className={styles.ailmentContainerTitle}>Existing Ailments, if any:</Container>
               </Row>
@@ -339,13 +354,13 @@ export default function PatientRegistration() {
               </Row>
             ))}
             </Container>
-            </Grid.Container>
-            <Button
+            </Grid.Container> */}
+            {/* <Button
               css={{ my: "$5", mx: "$12", width: "50px" }}
               shadow
               size="sm"
               onClick={() => handleAddField()}
-            >Add Ailment</Button>
+            >Add Ailment</Button> */}
 
             {/*Dynamic Ailment End  */}
           </form>

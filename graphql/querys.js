@@ -1,7 +1,7 @@
 import { gql} from "@apollo/client";
 
-  const NEW_PATIENT =gql`mutation CreatePatient($patientName: String!, $dateOfBirth: DateTime!, $phoneNo: Float!, $gender: String!, $address: String!, $district: String!, $city: String!, $state: String!, $pincode: Int!, $encounterType: Int!, $existingAilments: JSON) {
-    createPatient(patientName: $patientName, dateOfBirth: $dateOfBirth, phoneNo: $phoneNo, gender: $gender, address: $address, district: $district, city: $city, state: $state, pincode: $pincode, EncounterType: $encounterType, existingAilments: $existingAilments) {
+  const NEW_PATIENT =gql`mutation CreatePatient($patientName: String!, $dateOfBirth: DateTime!, $phoneNo: Float!, $gender: String!, $addressLine1: String!, $addressLine2: String!, $district: String!, $city: String!, $state: String!, $pincode: Int!) {
+    createPatient(patientName: $patientName, dateOfBirth: $dateOfBirth, phoneNo: $phoneNo, gender: $gender, addressLine1: $addressLine1, addressLine2: $addressLine2, district: $district, city: $city, state: $state, pincode: $pincode) {
       id
     }
   }`;
@@ -60,6 +60,5 @@ export {
   GET_ENCOUNTER_TYPES,
   GET_PATIENT_DATA,
   GET_PATIENT_DATA_GENERAL,
-  CREATE_ENCOUNTER,
   UPLOAD_FILE
 };

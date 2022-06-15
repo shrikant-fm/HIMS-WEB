@@ -15,7 +15,7 @@ export default function DropdownCustom({label, items, handleChange, value=""}) {
             <option value="">--Select--</option>
             {dropdownItems && dropdownItems.length > 0 ? dropdownItems.map((item, key) => {
                 return (
-                    <option value={item} key={key}>{item}</option>
+                    <option value={item.value} key={key}>{item.text}</option>
                 )
             }) : ''}
         </select>
