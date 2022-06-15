@@ -197,11 +197,11 @@ export default function PatientRegistration() {
                   />
                 </Grid>
 
-              <Grid xs={4} >
+              {/* <Grid xs={4} >
                 <DropdownCustom label={'Gender'} value={gender} items={genderItems} handleChange={setGender}/>
-              </Grid>
+              </Grid> */}
               
-              <Grid xs={4}>
+              {/* <Grid xs={4}>
                 <Input
                   className={styles.Input}
                   type="date"
@@ -215,7 +215,7 @@ export default function PatientRegistration() {
                     setDob(setDobState);
                   }}
                 />
-              </Grid>
+              </Grid> */}
                 <Grid className={styles.Grid}>
                   <DropdownCustom
                     label={"Gender *"}
@@ -315,8 +315,23 @@ export default function PatientRegistration() {
                     }}
                   />
                 </Grid>
+                <Grid className={styles.Grid}>
+                  <Input
+                    className={styles.stateInput}
+                    rounded
+                    bordered
+                    label="State *"
+                    placeholder="State"
+                    color="primary"
+                    onChange={(e) => {
+                      const setStateName = e.target.value;
+                      setState(setStateName);
+                    }}
+                  />
+                </Grid>
+                
 
-              <Grid xs={4} >
+              {/* <Grid xs={4} >
                 <Input
                   className={styles.Input}
                   rounded
@@ -329,9 +344,9 @@ export default function PatientRegistration() {
                     setDistrict(setDistrictState);
                   }}
                 />
-              </Grid>
+              </Grid> */}
               
-              <Grid xs={4} >
+              {/* <Grid xs={4} >
                 <Input
                   className={styles.Input}
                   rounded
@@ -360,54 +375,13 @@ export default function PatientRegistration() {
                     setPincode(setPincodeState);
                   }}
                 />
-              </Grid>
+              </Grid> */}
               
               {/* <Grid xs={4}>
                 <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
               </Grid> */}
-              <Grid  xs={6}>
-                <Input
-                  width="535px"
-                  rounded
-                  bordered
-                  label="Address Line-1"
-                  placeholder="Address Line-1"
-                  color="primary"
-                  onChange={(e) => {
-                    const setFirstAddress = e.target.value;
-                    setAddress1(setFirstAddress);
-                  }}
-                />
-              </Grid>
-              <Grid  xs={6} >
-                <Input
-                  width="535px"
-                  rounded
-                  bordered
-                  label="Address Line-2"
-                  placeholder="Address Line-2"
-                  color="primary"
-                  onChange={(e) => {
-                    const setSecondAddress = e.target.value;
-                    setAddress2(setSecondAddress);
-                  }}
-                />
-              </Grid>
-              {/* <Grid className={styles.Grid}>
-                <Grid className={styles.Grid}>
-                  <Input
-                    className={styles.stateInput}
-                    rounded
-                    bordered
-                    label="State *"
-                    placeholder="State"
-                    color="primary"
-                    onChange={(e) => {
-                      const setStateName = e.target.value;
-                      setState(setStateName);
-                    }}
-                  />
-                </Grid>
+              
+              {/* 
 
                 {/* <Grid>
                 <DropdownCustom label={'Reason for visit'} items={encounterTypes} handleChange={setEncounterType}/>
