@@ -1,5 +1,5 @@
-import React,{useState, useEffect} from "react";
-import { Card, Col, Row, Button, Text } from "@nextui-org/react";
+import React,{useState} from "react";
+import { Card } from "@nextui-org/react";
 
 
 
