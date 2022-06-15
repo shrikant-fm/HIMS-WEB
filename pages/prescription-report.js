@@ -11,32 +11,122 @@ import {
 import styles from "../styles/prescription-report.module.css";
 import Header from "../components/Header";
 import { PrescriptionImageCard } from "../components/PrescriptionImageCard";
+import { useLazyQuery, useMutation } from "@apollo/client";
+import { GET_PATIENT_ENCOUNTER, GET_PRESCRIPTION, CREATE_PRESCRIPTION_DATA } from "../graphql/strapi-query";
 
 function PrescriptionReport() {
   const [doctorName, setDoctorName] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
+  const [ encounterId , setEncounterId ] = useState(null);
+  const [medicines, setMedicines] = useState([]);
 
-  const [prescriptions, setPrescription] = useState([]);
+  const [prescription, setPrescription] = useState(null);
+
+  const [getEncouterData, { loading: encounterDataLoading, data: encounterData, error: encounterDataError }] = useLazyQuery(GET_PATIENT_ENCOUNTER, {fetchPolicy: 'network-only'})
+
+  const [ getPrescription, { loading: getPrescriptionLoading, data: getPrescriptionData, error: getPrescriptionError} ] = useLazyQuery(GET_PRESCRIPTION);
+  const [createPrescriptionData, {loading: createPrescriptionDataLoading, data: createPrescriptionDataData, error: createPrescriptionDataError }] = useMutation(CREATE_PRESCRIPTION_DATA)
+
+  const handleSearch = async () => {
+    if(encounterId) {
+       await getEncouterData({ 
+          variables : {
+            encounterId: parseInt(encounterId)
+          }
+        })
+    } else
+      alert("Plese enter encounter id")
+  }
+
+  React.useEffect(() => {
+    if (!encounterDataLoading) {
+      if (encounterDataError) {
+        console.log(encounterDataError.message)
+        setError("Error in fetching patients data!! Try again later.")
+        // return 
+      } else {
+        if(encounterData) {
+          getPrescription({
+            variables: {
+              patientEncounterId: parseInt(encounterId)
+            }
+          })
+        }
+      }
+    }
+  }, [encounterDataLoading]);
+
+  React.useEffect(() => {
+    if (!getPrescriptionLoading) {
+      if (getPrescriptionError) {
+        console.log(getPrescriptionError.message)
+        setError("Error in fetching patients data!! Try again later.")
+        // return 
+      } else {
+        if(getPrescriptionData) {
+          console.log(getPrescriptionData)
+          if (getPrescriptionData.prescriptions.data.length > 0) {
+            setPrescription(getPrescriptionData.prescriptions.data[0])
+          } else {
+            alert('Encounter/Prescription does not exist')
+            setPrescription(null)
+          }
+        }
+      }
+    }
+  }, [getPrescriptionLoading]);
 
   const handleChangeInput = (index, event) => {
-    const values = [...prescriptions];
+    const values = [...medicines];
     values[index][event.target.name] = event.target.value;
-    setPrescription(values);
+    setMedicines(values);
   };
 
   const handleAddField = () => {
-    setPrescription([
-      ...prescriptions,
+    setMedicines([
+      ...medicines,
       { medicine: "", dosage: "", duration: "" },
     ]);
   };
 
   const handleRemoveField = (index) => {
-    const values = [...prescriptions];
+    const values = [...medicines];
     // console.log(values);
     values.splice(index, 1);
-    setPrescription(values);
+    setMedicines(values);
   };
+
+  const handleFormSubmit = async(e) => {
+    e.preventDefault()
+    if (!doctorName || doctorName == "") {
+      alert("Enter doctor name")
+      return
+    }
+    createPrescriptionData({
+      variables: {
+        doctorName: doctorName,
+        medicines: medicines,
+        labTestRecommended: null,
+        diagnosis: diagnosis,
+        prescription: parseInt(prescription.id)
+      }
+    })
+  }
+
+  React.useEffect(() => {
+    if (!createPrescriptionDataLoading) {
+      if (createPrescriptionDataError) {
+        console.log(createPrescriptionDataError.message)
+        setError("Error in uploading prescription data!! Try again later.")
+        // return 
+      } else {
+        if(createPrescriptionDataData) {
+          alert("Prescription data uploaded successfully")
+          window.location.reload()
+        }
+      }
+    }
+  }, [createPrescriptionDataLoading]);
 
   return (
     <>
@@ -51,16 +141,12 @@ function PrescriptionReport() {
 
           <Row css={{ padding: "30px 30px" }} gap={2}>
             <Grid.Container gap={2} justify="center">
-              <Grid xs={12} sm={6} md={6}>
-                <Input
-                  className={styles.encounterInput}
-                  clearable
-                  bordered
-                  labelPlaceholder="Enter Encounter ID"
-                />
+              <Grid xs={4}>
+                <Input clearable bordered labelPlaceholder="Enter Patient Encounter ID" value={encounterId} 
+                  onChange={(e)=>setEncounterId(e.target.value)}/>
               </Grid>
               <Grid xs={12} sm={6} md={6}>
-                <Button color="primary" auto ghost>
+                <Button color="primary" auto ghost onClick={() => handleSearch()}>
                   Search
                 </Button>
               </Grid>
@@ -70,7 +156,7 @@ function PrescriptionReport() {
           <Row css={{ padding: "0 20px" }}>
             <Grid.Container gap={2} justify="center">
               <Grid xs={12} md={4}>
-                <PrescriptionImageCard />
+                {prescription ? <PrescriptionImageCard data={prescription.attributes}/> : ''}
               </Grid>
               <Grid xs={12} md={8}>
                 <Card
@@ -118,7 +204,7 @@ function PrescriptionReport() {
                       </Text>
                     </Row>
                     <>
-                      {prescriptions.map((prescription, index) => (
+                      {medicines.map((m, index) => (
                         <Row key={index}>
                           <Grid.Container gap={2}>
                             <Grid
@@ -134,7 +220,7 @@ function PrescriptionReport() {
                                 placeholder="Medicine"
                                 color="primary"
                                 name="medicine"
-                                value={prescription.medicine}
+                                value={m.medicine}
                                 onChange={(event) =>
                                   handleChangeInput(index, event)
                                 }
@@ -153,7 +239,7 @@ function PrescriptionReport() {
                                 placeholder="Dosage"
                                 color="primary"
                                 name="dosage"
-                                value={prescription.dosage}
+                                value={m.dosage}
                                 onChange={(event) =>
                                   handleChangeInput(index, event)
                                 }
@@ -172,7 +258,7 @@ function PrescriptionReport() {
                                 placeholder="Duration"
                                 color="primary"
                                 name="duration"
-                                value={prescription.duration}
+                                value={m.duration}
                                 onChange={(event) =>
                                   handleChangeInput(index, event)
                                 }
@@ -203,7 +289,17 @@ function PrescriptionReport() {
                           size="sm"
                           onClick={() => handleAddField()}
                         >
-                          Add Prescription
+                          Add Medicine
+                        </Button>
+                      </Row>
+                      <Row>
+                        <Button
+                          css={{ my: "$5", width: "50px" }}
+                          shadow
+                          size="sm"
+                          onClick={(e) => handleFormSubmit(e)}
+                        >
+                          Submit
                         </Button>
                       </Row>
                     </>

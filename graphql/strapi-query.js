@@ -130,7 +130,7 @@ import { gql } from "@apollo/client";
 
     const GET_PRESCRIPTION = gql`
     query GetPrescriptions($patientEncounterId: ID!) {
-        prescriptions( filters: { patient_encounter: {id: {eq: patientEncounterId}}}){
+        prescriptions( filters: { patient_encounter: {id: {eq: $patientEncounterId}}}){
         data {
           id
           attributes {
@@ -153,6 +153,24 @@ import { gql } from "@apollo/client";
       }
     }`;
 
+    const CREATE_PRESCRIPTION_DATA = gql`
+    mutation CreatePrescriptionData($doctorName: String!, $medicines: JSON, $labTestRecommended: JSON, $diagnosis: String, $prescriptionId: ID!) {
+      createPrescriptionData(
+        data: {
+          doctorName: $doctorName
+          medicines: $medicines
+          labTestRecommended: $labTestRecommended
+          diagnosis: $diagnosis
+          prescription: $prescriptionId
+        }
+      ) {
+        data {
+          id
+        }
+      }
+    }
+    `;
+
 
 export {
   CREATE_NEW_PATIENT,
@@ -162,5 +180,6 @@ export {
   GET_PATIENT_ENCOUNTER,
   UPLOAD_FILE,
   CREATE_PRESCRIPTION,
-  GET_PRESCRIPTION
+  GET_PRESCRIPTION,
+  CREATE_PRESCRIPTION_DATA
 };

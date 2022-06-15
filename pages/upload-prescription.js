@@ -37,7 +37,7 @@ export default function Upload(props) {
           }
         })
     } else
-      alert("Plese Enter Encounter ID")
+      alert("Plese Enter Phone Number")
   } 
 
   React.useEffect(() => {
