@@ -13,6 +13,9 @@ import Header from "../components/Header";
 import { PrescriptionImageCard } from "../components/PrescriptionImageCard";
 
 function PrescriptionReport() {
+  const [doctorName, setDoctorName] = useState("");
+  const [diagnosis, setDiagnosis] = useState("");
+
   const [prescriptions, setPrescription] = useState([]);
 
   const handleChangeInput = (index, event) => {
@@ -30,7 +33,7 @@ function PrescriptionReport() {
 
   const handleRemoveField = (index) => {
     const values = [...prescriptions];
-    console.log(values);
+    // console.log(values);
     values.splice(index, 1);
     setPrescription(values);
   };
@@ -47,19 +50,21 @@ function PrescriptionReport() {
           </Row>
 
           <Row css={{ padding: "30px 30px" }} gap={2}>
-            <Grid xs={12} md={6}>
-              <Input
-                className={styles.encounterInput}
-                clearable
-                bordered
-                labelPlaceholder="Enter Encounter ID"
-              />
-            </Grid>
-            <Grid xs={12} md={6}>
-              <Button color="primary" auto ghost>
-                Search
-              </Button>
-            </Grid>
+            <Grid.Container gap={2} justify="center">
+              <Grid xs={12} sm={6} md={6}>
+                <Input
+                  className={styles.encounterInput}
+                  clearable
+                  bordered
+                  labelPlaceholder="Enter Encounter ID"
+                />
+              </Grid>
+              <Grid xs={12} sm={6} md={6}>
+                <Button color="primary" auto ghost>
+                  Search
+                </Button>
+              </Grid>
+            </Grid.Container>
           </Row>
 
           <Row css={{ padding: "0 20px" }}>
@@ -68,10 +73,14 @@ function PrescriptionReport() {
                 <PrescriptionImageCard />
               </Grid>
               <Grid xs={12} md={8}>
-                <Card css={{ minWidth: "350px" }} isHoverable variant="bordered" >
+                <Card
+                  css={{ minWidth: "350px" }}
+                  isHoverable
+                  variant="bordered"
+                >
                   <Card.Body>
                     <Row>
-                      <Grid.Container >
+                      <Grid.Container>
                         <Grid xs={12} sm={6} md={6} className={styles.Grid}>
                           <Input
                             className={styles.doctorInput}
@@ -81,8 +90,8 @@ function PrescriptionReport() {
                             placeholder="Doctor Name"
                             color="primary"
                             onChange={(e) => {
-                              const setFullNameState = e.target.value;
-                              setFullName(setFullNameState);
+                              const setDoctorNameState = e.target.value;
+                              setDoctorName(setDoctorNameState);
                             }}
                           />
                         </Grid>
@@ -95,8 +104,8 @@ function PrescriptionReport() {
                             placeholder="Diagnosis"
                             color="primary"
                             onChange={(e) => {
-                              const setContactState = e.target.value;
-                              setContact(setContactState);
+                              const setDiagnosisState = e.target.value;
+                              setDiagnosis(setDiagnosisState);
                             }}
                           />
                         </Grid>
@@ -108,96 +117,96 @@ function PrescriptionReport() {
                         Medicines Suggested:
                       </Text>
                     </Row>
-                    <Row>
-                      
-                      <Grid.Container gap={2}>
-                          {prescriptions.map((prescription, index) => (
-                            <Row key={index}>
-                              <Grid
-                                xs={12}
-                                md={3}
-                                className={styles.prescriptionGrid}
-                              >
-                                <Input
-                                  className={styles.medicineInput}
-                                  rounded
-                                  bordered
-                                  label="Medicine"
-                                  placeholder="Medicine"
-                                  color="primary"
-                                  name="medicine"
-                                  value={prescription.medicine}
-                                  onChange={(event) =>
-                                    handleChangeInput(index, event)
-                                  }
-                                />
-                              </Grid>
-                              <Grid
-                                xs={12}
-                                md={3}
-                                className={styles.prescriptionGrid}
-                              >
-                                <Input
-                                  className={styles.dosageInput}
-                                  rounded
-                                  bordered
-                                  label="Dosage"
-                                  placeholder="Dosage"
-                                  color="primary"
-                                  name="dosage"
-                                  value={prescription.dosage}
-                                  onChange={(event) =>
-                                    handleChangeInput(index, event)
-                                  }
-                                />
-                              </Grid>
-                              <Grid
-                                xs={12}
-                                md={3}
-                                className={styles.prescriptionGrid}
-                              >
-                                <Input
-                                  className={styles.durationInput}
-                                  rounded
-                                  bordered
-                                  label="Duration"
-                                  placeholder="Duration"
-                                  color="primary"
-                                  name="duration"
-                                  value={prescription.duration}
-                                  onChange={(event) =>
-                                    handleChangeInput(index, event)
-                                  }
-                                />
-                              </Grid>
+                    <>
+                      {prescriptions.map((prescription, index) => (
+                        <Row key={index}>
+                          <Grid.Container gap={2}>
+                            <Grid
+                              xs={3}
+                              md={3}
+                              className={styles.prescriptionGrid}
+                            >
+                              <Input
+                                className={styles.medicineInput}
+                                rounded
+                                bordered
+                                label="Medicine"
+                                placeholder="Medicine"
+                                color="primary"
+                                name="medicine"
+                                value={prescription.medicine}
+                                onChange={(event) =>
+                                  handleChangeInput(index, event)
+                                }
+                              />
+                            </Grid>
+                            <Grid
+                              xs={3}
+                              md={3}
+                              className={styles.prescriptionGrid}
+                            >
+                              <Input
+                                className={styles.dosageInput}
+                                rounded
+                                bordered
+                                label="Dosage"
+                                placeholder="Dosage"
+                                color="primary"
+                                name="dosage"
+                                value={prescription.dosage}
+                                onChange={(event) =>
+                                  handleChangeInput(index, event)
+                                }
+                              />
+                            </Grid>
+                            <Grid
+                              xs={3}
+                              md={3}
+                              className={styles.prescriptionGrid}
+                            >
+                              <Input
+                                className={styles.durationInput}
+                                rounded
+                                bordered
+                                label="Duration"
+                                placeholder="Duration"
+                                color="primary"
+                                name="duration"
+                                value={prescription.duration}
+                                onChange={(event) =>
+                                  handleChangeInput(index, event)
+                                }
+                              />
+                            </Grid>
 
-                              <Grid className={styles.prescriptionGrid}>
-                                <Button
-                                  css={{
-                                    my: "$12",
-                                  }}
-                                  auto
-                                  shadow
-                                  color="error"
-                                  size="xs"
-                                  onClick={() => handleRemoveField(index)}
-                                >
-                                  X
-                                </Button>
-                              </Grid>
-                            </Row>
-                          ))}
-                          <Button
-                            css={{ my: "$5", width: "50px" }}
-                            shadow
-                            size="sm"
-                            onClick={() => handleAddField()}
-                          >
-                            Add Prescription
-                          </Button>
-                        
-                      </Grid.Container>
-                    </Row>
+                            <Grid xs={3} className={styles.prescriptionGrid}>
+                              <Button
+                                css={{
+                                  my: "$10",
+                                }}
+                                auto
+                                shadow
+                                color="error"
+                                size="xs"
+                                onClick={() => handleRemoveField(index)}
+                              >
+                                X
+                              </Button>
+                            </Grid>
+                          </Grid.Container>
+                        </Row>
+                      ))}
+                      <Row>
+                        <Button
+                          css={{ my: "$5", width: "50px" }}
+                          shadow
+                          size="sm"
+                          onClick={() => handleAddField()}
+                        >
+                          Add Prescription
+                        </Button>
+                      </Row>
+                    </>
                   </Card.Body>
                 </Card>
               </Grid>

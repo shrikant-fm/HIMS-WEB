@@ -2,16 +2,16 @@
   font-size: 25px;
   color: green;
 }
-.cardWidth{
-  min-width: 600px;
-}
+
 .doctorInput, .diagnosisInput, .encounterInput {
   width: 20vw;
   min-width: 200px;
+  max-width: 450px;
 }
 .medicineInput, .dosageInput, .durationInput {
   width: 12vw;
-  min-width: 100px;
+  min-width: 70px;
+  max-width: 250px;
 }
 .Input {
   width: 20vw;
@@ -25,32 +25,11 @@
   padding-left: 0;
   padding-right: 0;
 }
-.enctrTypeTextInput {
-  width: 20vw;
-  min-width: 250px;
-  margin-top: 28px;
-}
-
-.pComplaintInput,
-.sComplaintInput {
-  width: 30vw;
-  min-width: 250px;
-}
-
-.patientNameBtn {
-  background-color: transparent;
-  color: black;
-}
 
 .ailmentsInput {
   width: 10vw;
 }
 
-/* .center {
-    position: absolute;
-    transform: translate(420%, 0);
-    padding: 10px;
-  } */
 
 .padding {
   padding: 2vw 2vh;
