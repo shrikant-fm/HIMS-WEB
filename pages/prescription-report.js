@@ -108,7 +108,7 @@ function PrescriptionReport() {
         medicines: medicines,
         labTestRecommended: null,
         diagnosis: diagnosis,
-        prescription: parseInt(prescription.id)
+        prescriptionId: parseInt(prescription.id)
       }
     })
   }

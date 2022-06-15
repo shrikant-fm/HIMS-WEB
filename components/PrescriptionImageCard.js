@@ -43,7 +43,7 @@ export const PrescriptionImageCard = ({ data }) => {
     </Card.Header>
     <Card.Body css={{ p: 0 }}>
       <Card.Image
-        src={`http://localhost:1337${data.imagePath}`}
+        src={data.imagePath}
         width="100%"
         height="100%"
         objectFit="cover"
