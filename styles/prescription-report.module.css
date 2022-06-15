@@ -1,59 +1,70 @@
 .formTitle {
-    font-size: 25px;
-    color: green;
+  font-size: 25px;
+  color: green;
 }
-
-.doctorName, .contactNoInput, .genderInput {
-  width: 10vw;
+.cardWidth{
+  min-width: 600px;
+}
+.doctorInput, .diagnosisInput, .encounterInput {
+  width: 20vw;
+  min-width: 200px;
+}
+.medicineInput, .dosageInput, .durationInput {
+  width: 12vw;
+  min-width: 100px;
+}
+.Input {
+  width: 20vw;
+  color: primary;
   min-width: 250px;
 }
-
-  .Input {
-    width: 20vw;
-    color: primary;
-    min-width: 250px;
-  } 
-  .Grid{
-    padding: 1.5rem;
-  }
+.Grid {
+  padding: 1.5rem;
+}
+.prescriptionGrid{
+  padding-left: 0;
+  padding-right: 0;
+}
 .enctrTypeTextInput {
   width: 20vw;
   min-width: 250px;
   margin-top: 28px;
 }
 
-.pComplaintInput, .sComplaintInput {
+.pComplaintInput,
+.sComplaintInput {
   width: 30vw;
   min-width: 250px;
 }
-  
-  .patientNameBtn {
-    background-color: transparent;
-    color: black;
-  }
 
-  .ailmentsInput {
-    width: 10vw;
-    
-  }
-  
-  /* .center {
+.patientNameBtn {
+  background-color: transparent;
+  color: black;
+}
+
+.ailmentsInput {
+  width: 10vw;
+}
+
+/* .center {
     position: absolute;
     transform: translate(420%, 0);
     padding: 10px;
   } */
-  
-  .padding {
-    padding: 2vw 2vh;
-  }
-  
-  .container {
-    width: auto;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+
+.padding {
+  padding: 2vw 2vh;
+}
+
+
+.container {
+  width: auto;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2vw 2vh;
+}
 
 /* @media only screen and (max-width: 600px) {
   .enctrTypeTextInput {

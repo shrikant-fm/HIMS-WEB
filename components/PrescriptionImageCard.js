@@ -1,7 +1,7 @@
 import { Card, Col, Row, Button, Text } from "@nextui-org/react";
 
 export const PrescriptionImageCard = () => (
-  <Card css={{ w: "100%", h: "400px" }}>
+  <Card css={{ w: "100%", h: "400px",  minWidth: "350px" }}>
     <Card.Header css={{ position: "absolute", zIndex: 1, top: 5 }}>
       <Col>
         <Text size={12} weight="bold" transform="uppercase" color="#ffffffAA">
