@@ -37,7 +37,7 @@ export default function Upload(props) {
           }
         })
     } else
-      alert("Plese Enter Phone Number")
+      alert("Plese Enter Encounter Id")
   } 
 
   React.useEffect(() => {
@@ -168,7 +168,7 @@ export default function Upload(props) {
               <Input
                 name="gender"
                 readOnly
-                value={`${patient.gender}/${patient.dob ? calculateAge(patient.dob) : 'NA'}`}
+                value={`${patient.gender}/${patient.dateOfBirth ? calculateAge(patient.dateOfBirth) : 'NA'}`}
               />
             </Grid>
             {/* <Grid xs={6} sm={6} lg={4} xl={4}>

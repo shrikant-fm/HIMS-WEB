@@ -20,6 +20,10 @@ const router = useRouter();
   const routePrescriptionReport=(e)=>{
     router.push('/prescription-report')
   }
+
+  const routePrescriptionVerification=(e)=>{
+    router.push('/prescription-verification')
+  }
   return (
     <div className={styles.container}>
       <Head>
@@ -36,7 +40,7 @@ const router = useRouter();
         <Button  color="primary" onClick={routeGenerateSlip} className={styles.menuItems}>Generate Slip</Button>
         <Button  color="primary" onClick={routeUploadPrescription} className={styles.menuItems}>Upload Prescription</Button>
         <Button  color="primary" onClick={routePrescriptionReport} className={styles.menuItems}>Digitize Prescription</Button>
-        <Button  color="primary" onClick={() => {}} className={styles.menuItems}>Verify Prescription</Button>
+        <Button  color="primary" onClick={routePrescriptionVerification} className={styles.menuItems}>Verify Prescription</Button>
       </main>
 
     </div>

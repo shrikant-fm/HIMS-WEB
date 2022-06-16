@@ -148,6 +148,17 @@ import { gql } from "@apollo/client";
                 }
               }
             }
+            prescription_datum {
+              data {
+                id
+                attributes {
+                  doctorName
+                  diagnosis
+                  medicines
+                  labTestRecommended
+                }
+              }
+            }
           }
         }
       }
@@ -171,6 +182,29 @@ import { gql } from "@apollo/client";
     }
     `;
 
+    const UPDATE_PRESCRIPTION_DATA = gql`
+    mutation UpdatePrescriptionData(
+      $prescriptionDataId: ID!
+      $doctorName: String
+      $diagnosis: String
+      $medicines: JSON
+      $labTestRecommended: JSON
+    ) {
+      updatePrescriptionData(
+        id: $prescriptionDataId
+        data: {
+          doctorName: $doctorName
+          diagnosis: $diagnosis
+          medicines: $medicines
+          labTestRecommended: $labTestRecommended
+        }
+      ) {
+        data {
+          id
+        }
+      }
+    }`;
+
 
 export {
   CREATE_NEW_PATIENT,
@@ -181,5 +215,6 @@ export {
   UPLOAD_FILE,
   CREATE_PRESCRIPTION,
   GET_PRESCRIPTION,
-  CREATE_PRESCRIPTION_DATA
+  CREATE_PRESCRIPTION_DATA,
+  UPDATE_PRESCRIPTION_DATA
 };
