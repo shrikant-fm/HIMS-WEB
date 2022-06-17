@@ -1,36 +1,62 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import styles from "../styles/Login.module.css";
 import { useRouter } from "next/router";
 import { Card, Input, Button, Text, Row } from "@nextui-org/react";
+import { LOGIN } from "../graphql/strapi-query";
+import { useMutation } from "@apollo/client";
 
 export default function Login() {
   const router = useRouter();
+  const [userName, setUsername] = useState("");
+  const [passWord, setPassword] = useState("");
+  
 
-  const[userName, setUsername] = useState("");
-  const[passWord,setPassword] = useState("");
+  const [
+    getLoginData,
+    {
+      loading: loginTypesLoading,
+      data: loginTypesData,
+      error: loginTypesError,
+    },
+  ] = useMutation(LOGIN);
 
-  const checkValues = () =>{
-    if (userName === "") {
-      return { status: true, msg: "Please Enter Username" };
-    }else  if (passWord === "") {
-      return { status: true, msg: "Please Enter Password" };
-    }else {
-      return { status: false };
+ 
+
+  const handleClick = async () => {
+    if (userName) {
+      if (passWord) {
+        const loginData= await getLoginData({
+          variables: {
+            email: userName,
+            password: passWord,
+          },
+          
+        });
+      localStorage.setItem('token',loginData.data.login.jwt);
+      } else {
+        alert("Please Enter Password");
+      }
+    } else {
+      alert("Please Enter Username");
     }
-  }
-
-  const handleClick =(e) => {
-    e.preventDefault();
-    const checkValueResponse = checkValues();
-
-    if (checkValueResponse.status === true) {
-      alert(checkValueResponse.msg);
-    }else{
-      console.log(" Success ");
-      router.push('/');
-    }
-    
   };
+
+  React.useEffect(() => {
+    if (!loginTypesLoading) {
+      if (loginTypesError) {
+        console.log(loginTypesError.message);
+        alert("Error while login!! Try again later.");
+        window.location.reload()
+        // return
+      } else {
+        if (loginTypesData) {
+
+          alert("Login Successfull");
+          router.push("/");
+        }
+      }
+    }
+  }, [loginTypesLoading]);
 
   return (
     <div>
@@ -43,13 +69,7 @@ export default function Login() {
         >
           <Card.Header>
             <Row justify="center">
-              <Text
-                h2
-                css={{
-                  textGradient: "45deg, $blue600 -20%, $pink600 50%",
-                }}
-                weight="bold"
-              >
+              <Text h2 color="primary" weight="bold">
                 Login
               </Text>
             </Row>
@@ -60,6 +80,7 @@ export default function Login() {
               clearable
               underlined
               labelPlaceholder="Username"
+              
               onChange={(e) => {
                 const setUsernameState = e.target.value;
                 setUsername(setUsernameState);
@@ -71,13 +92,19 @@ export default function Login() {
               clearable
               underlined
               labelPlaceholder="Password"
+              
               onChange={(e) => {
                 const setPasswordState = e.target.value;
                 setPassword(setPasswordState);
               }}
             />
 
-            <Button css={{margin:"50px"}} size="md"  color="primary" onClick={handleClick} >
+            <Button
+              css={{ margin: "50px" }}
+              size="md"
+              color="primary"
+              onClick={handleClick}
+            >
               Submit
             </Button>
           </Card.Body>

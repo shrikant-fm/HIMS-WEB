@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Card, Row, Grid, Input, Button } from "@nextui-org/react";
 import styles from "../styles/Patient.module.css";
 import { useRouter } from "next/router";
-import { GET_ENCOUNTER_TYPES, CREATE_NEW_PATIENT } from "../graphql/strapi-query";
+import { GET_ENCOUNTER_TYPES, CREATE_NEW_PATIENT,GET_USER_ROLE } from "../graphql/strapi-query";
 import {useMutation, useQuery } from "@apollo/client";
 import DropdownCustom from "../components/Dropdown";
 import Header from "../components/Header";
@@ -28,6 +28,20 @@ export default function PatientRegistration() {
   // const [ailments, setAilments] = useState([]);
   // const [encounterTypes, setEncounterTypes] = useState([]);
   // const [encounterType, setEncounterType] = useState('');
+
+
+  // User Authentication and Role Verification
+const [userRole, setUserRole] = useState(null)
+
+const { loading: userRoleLoading, data: userRoleData, error: userRoleError } = useQuery(GET_USER_ROLE,{fetchPolicy: "no-cache"})
+
+React.useEffect(() => {
+  if (userRoleData) {
+    var data = userRoleData.me.role.name; 
+    setUserRole(data)
+  }
+}, [userRoleLoading])
+// Verification End
 
   const [
     createPatient,
@@ -153,6 +167,7 @@ export default function PatientRegistration() {
       //  const patient = await CreatePatient(body);
     }
   }
+  if(userRole === "Generate Slip"){
   return (
     <>
       <Header />
@@ -483,4 +498,5 @@ export default function PatientRegistration() {
       </Container>
     </>
   );
+}
 }

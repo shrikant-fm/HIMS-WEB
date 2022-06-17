@@ -205,6 +205,27 @@ import { gql } from "@apollo/client";
       }
     }`;
 
+    const LOGIN = gql`
+    mutation($email: String!, $password: String!) {
+      login(input: { identifier: $email, password: $password }) {
+        jwt
+        user{
+          id
+          username
+        }
+    }}`;
+
+    const GET_USER_ROLE = gql`
+    query {
+        me {
+          id
+          username
+          email
+          role {
+            name
+          }
+        }
+      }`;
 
 export {
   CREATE_NEW_PATIENT,
@@ -216,5 +237,7 @@ export {
   CREATE_PRESCRIPTION,
   GET_PRESCRIPTION,
   CREATE_PRESCRIPTION_DATA,
-  UPDATE_PRESCRIPTION_DATA
+  UPDATE_PRESCRIPTION_DATA,
+  LOGIN,
+  GET_USER_ROLE
 };
